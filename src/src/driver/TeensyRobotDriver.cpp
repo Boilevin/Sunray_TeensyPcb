@@ -555,14 +555,13 @@ void AmMotorDriver::setMotorDriver(int pinDir, int pinPWM, int speed, DriverChip
 
   #ifdef MOTOR_DRIVER_BTS7960 
   if (reverse) {  
-    CONSOLE.println ("reverse into motor BTS7960");
     // reverse
-    pinMan.analogWrite(pinPWM, 255 - ((byte)abs(speed)), chip.pwmFreq);  // nPWM (inverted pwm)
-    pinMan.analogWrite(pinPWM, 0, chip.pwmFreq);       // PWM
+    pinMan.analogWrite(pinPWM, ((byte)abs(speed)), chip.pwmFreq);  // nPWM (inverted pwm)
+    pinMan.analogWrite(pinDir, 0, chip.pwmFreq);       // PWM
   } else {
     // forward
     pinMan.analogWrite(pinPWM, 0, chip.pwmFreq);  // nPWM (inverted pwm)
-    pinMan.analogWrite(pinPWM, ((byte)abs(speed)), chip.pwmFreq);       // PWM
+    pinMan.analogWrite(pinDir, ((byte)abs(speed)), chip.pwmFreq);       // PWM
   }
   #else  // other motor driver
   if (reverse) {  
