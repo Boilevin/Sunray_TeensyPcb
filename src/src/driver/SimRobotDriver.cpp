@@ -172,8 +172,8 @@ void SimMotorDriver::resetMotorFaults(){
   CONSOLE.println("SimMotorDriver::resetMotorFaults");
   simMotorLeftFault = simMotorRightFault = simMotorMowFault = false;
 }
-
-void SimMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent) {  
+//bber
+void SimMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){
   leftCurrent = abs(simRobot.leftSpeed) / 2.0;
   rightCurrent = abs(simRobot.rightSpeed) / 2.0;
   mowCurrent = abs(simRobot.mowSpeed);

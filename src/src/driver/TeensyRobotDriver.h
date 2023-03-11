@@ -70,8 +70,11 @@ class AmMotorDriver: public MotorDriver {
     void setMotorPwm(int leftPwm, int rightPwm, int mowPwm) override;
     void getMotorFaults(bool &leftFault, bool &rightFault, bool &mowFault) override;
     void resetMotorFaults()  override;
-    void getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent) override;
-    void getMotorEncoderTicks(int &leftTicks, int &rightTicks, int &mowTicks) override;
+    //bber override fail in getmotorcurrent after adding the mow number 1 2 3  ?????????????
+    void getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current) override;
+    void getMotorEncoderTicks(int &leftTicks, int &rightTicks, int &mowTicksint) override;
+  
+
   protected:
     int lastLeftPwm;
     int lastRightPwm;
@@ -80,6 +83,7 @@ class AmMotorDriver: public MotorDriver {
     int rightSpeedSign; // current motor direction (1 or -1)
     int mowSpeedSign; // current motor direction (1 or -1)
     DriverChip MC33926;
+    //bber
     DriverChip BTS7960;
     DriverChip DRV8308;
     DriverChip A4931;

@@ -505,13 +505,13 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #ifdef __linux__
   // ...
 #elif __IMXRT1062__  //teensy 4
- //#define pinMotorLeftEnable  5 
+  #define pinMotorLeftEnable  5 
   #define pinMotorEnable  5         // EN motors enable
   #define pinMotorLeftPWM 7          // M1_IN1 left motor PWM pin
   #define pinMotorLeftDir 6         // M1_IN2 left motor Dir pin
   //#define pinMotorLeftSense A1       // M1_FB  left motor current sense
   //#define pinMotorLeftFault 25       // M1_SF  left motor fault
- // #define pinMotorRightEnable  2                                                              
+  #define pinMotorRightEnable  2                                                              
   #define pinMotorRightPWM  4        // M2_IN1 right motor PWM pin
   #define pinMotorRightDir 3        // M2_IN2 right motor Dir pin
   //#define pinMotorRightSense A0      // M2_FB  right motor current sense

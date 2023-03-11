@@ -46,10 +46,22 @@ class Motor {
     float angularSpeedSet; // rad/s
     float motorLeftSense; // left motor current (amps)
     float motorRightSense; // right  motor current (amps)
-    float motorMowSense;  // mower motor current (amps)         
+    //bber
+    float motorMowSense;  // mower motor current (amps) 
+    float motorMow1Sense;  // mower motor current (amps) 
+    float motorMow2Sense;  // mower motor current (amps) 
+    float motorMow3Sense;  // mower motor current (amps) 
+
+
     float motorLeftSenseLP; // left motor current (amps, low-pass)
     float motorRightSenseLP; // right  motor current (amps, low-pass)
-    float motorMowSenseLP;  // mower motor current (amps, low-pass)       
+
+    //bber
+    float motorMowSenseLP;  // mower motor current = the hihest of the 3 mow motor for overload test (amps, low-pass) 
+    float motorMow1SenseLP;  // mower motor current (amps, low-pass) 
+    float motorMow2SenseLP;  // mower motor current (amps, low-pass) 
+    float motorMow3SenseLP;  // mower motor current (amps, low-pass) 
+
     float motorsSenseLP; // all motors current (amps, low-pass)
     float motorLeftSenseLPNorm; 
     float motorRightSenseLPNorm;

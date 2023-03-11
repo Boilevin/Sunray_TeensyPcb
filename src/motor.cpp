@@ -70,10 +70,19 @@ void Motor::begin() {
   
   motorLeftSense = 0;
   motorRightSense = 0;
-  motorMowSense = 0;  
+  //bber
+  motorMowSense = 0; 
+  motorMow1Sense = 0; 
+  motorMow2Sense = 0; 
+  motorMow3Sense = 0; 
+
   motorLeftSenseLP = 0;
   motorRightSenseLP = 0;
-  motorMowSenseLP = 0;  
+  //bber
+  motorMow1SenseLP = 0; 
+  motorMow2SenseLP = 0; 
+  motorMow3SenseLP = 0; 
+
   motorsSenseLP = 0;
 
   activateLinearSpeedRamp = USE_LINEAR_SPEED_RAMP;
@@ -457,11 +466,16 @@ bool Motor::checkMowRpmFault(){
 void Motor::sense(){
   if (millis() < nextSenseTime) return;
   nextSenseTime = millis() + 20;
-  motorDriver.getMotorCurrent(motorLeftSense, motorRightSense, motorMowSense);
+  motorDriver.getMotorCurrent(motorLeftSense, motorRightSense, motorMowSense, motorMow1Sense, motorMow2Sense, motorMow3Sense);
   float lp = 0.995; // 0.9
   motorRightSenseLP = lp * motorRightSenseLP + (1.0-lp) * motorRightSense;
   motorLeftSenseLP = lp * motorLeftSenseLP + (1.0-lp) * motorLeftSense;
   motorMowSenseLP = lp * motorMowSenseLP + (1.0-lp) * motorMowSense; 
+  //bber
+  motorMow1SenseLP = lp * motorMow1SenseLP + (1.0-lp) * motorMow1Sense; 
+  motorMow2SenseLP = lp * motorMow2SenseLP + (1.0-lp) * motorMow2Sense; 
+  motorMow3SenseLP = lp * motorMow3SenseLP + (1.0-lp) * motorMow3Sense; 
+
   motorsSenseLP = motorRightSenseLP + motorLeftSenseLP + motorMowSenseLP;
   motorRightPWMCurrLP = lp * motorRightPWMCurrLP + (1.0-lp) * ((float)motorRightPWMCurr);
   motorLeftPWMCurrLP = lp * motorLeftPWMCurrLP + (1.0-lp) * ((float)motorLeftPWMCurr);

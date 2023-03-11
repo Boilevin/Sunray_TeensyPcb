@@ -576,8 +576,9 @@ void SerialMotorDriver::resetMotorFaults(){
   //delay(1);
   //serialRobot.requestMotorPwm(0, 0, 0);
 }
+//bber
 
-void SerialMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent) {  
+void SerialMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent , float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current) {  
   //leftCurrent = 0.5;
   //rightCurrent = 0.5;
   //mowCurrent = 0.8;

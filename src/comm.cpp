@@ -588,6 +588,27 @@ void cmdSummary(){
  */
   cmdAnswer(s);  
 }
+//bber
+// request all 5 motor sense for raspberry pi
+void cmdMotorSense(){
+  String s = F("M2,");
+  s += motor.motorLeftSenseLP;
+  s += ",";
+  s += motor.motorRightSenseLP;
+  s += ",";
+  s += motor.motorMow1SenseLP;
+  s += ",";
+  s += motor.motorMow2SenseLP;
+  s += ",";
+  s += motor.motorMow3SenseLP;
+  s += ",";
+  s += motor.motorMowSenseLP;
+
+
+
+  cmdAnswer(s);  
+}
+
 
 // request statistics
 void cmdStats(){
@@ -840,7 +861,16 @@ void processCmd(bool checkCrc, bool decrypt){
       if (cmd[4] == '2') cmdObstacles();      
     }
   }
-  if (cmd[3] == 'M') cmdMotor();
+  //bber
+  if (cmd[3] == 'M') {
+    if (cmd.length() <= 4){
+      cmdMotor(); 
+    } else {
+      if (cmd[4] == '2') cmdMotorSense();      
+    }
+    
+  }
+
   if (cmd[3] == 'C'){ 
     if ((cmd.length() > 4) && (cmd[4] == 'T')) cmdTuneParam();
     else cmdControl();

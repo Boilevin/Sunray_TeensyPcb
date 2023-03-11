@@ -378,10 +378,18 @@ void AmMotorDriver::begin(){
 
   #endif
 
-
-  // left wheel motor
+  #ifdef MOTOR_DRIVER_BTS7960  // on teensyPCB there is 2 enable for dire motor left and right
+  pinMode(pinMotorLeftEnable, OUTPUT);
+  digitalWrite(pinMotorLeftEnable, gearsDriverChip.enableActive);
+  pinMode(pinMotorRightEnable, OUTPUT);
+  digitalWrite(pinMotorRightEnable, gearsDriverChip.enableActive);
+  #elif
   pinMode(pinMotorEnable, OUTPUT);
   digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
+  #endif
+
+
+  // left wheel motor
   pinMode(pinMotorLeftPWM, OUTPUT);
   pinMode(pinMotorLeftDir, OUTPUT);
 
@@ -685,35 +693,21 @@ void AmMotorDriver::resetMotorFaults(){
   */
 }
 
-void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent){
+void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){
   // current (amps)= ((ADCvoltage + ofs)^pow) * scale
+      //bber
+      rightCurrent=MotLeftIna226.readShuntCurrent() ;
+      leftCurrent= MotRightIna226.readShuntCurrent() ;
+      mow1Current = CenterMowIna226.readShuntCurrent() ;
+	    mow2Current = LeftMowIna226.readShuntCurrent() ;
+	    mow3Current = RightMowIna226.readShuntCurrent() ;
 
-      Center_Mow_Current = CenterMowIna226.readShuntCurrent() ;
-	    Left_Mow_Current = LeftMowIna226.readShuntCurrent() ;
-	    Right_Mow_Current = RightMowIna226.readShuntCurrent() ;
-  	  float motorMowCurrent = max(Center_Mow_Current, Left_Mow_Current);
-	    mowCurrent = max(motorMowCurrent, Right_Mow_Current);	        
-/*
+  	  float motorMowCurrent = max(mow1Current, mow2Current); //find the biggest one
+	    mowCurrent = max(motorMowCurrent, mow3Current);	
 
-  float ValuePosCheck	= 0;
-  ValuePosCheck = (((float)ADC2voltage(analogRead(pinMotorLeftSense))) + gearsDriverChip.adcVoltToAmpOfs);
-  if (ValuePosCheck < 0) ValuePosCheck = 0;	// avoid negativ numbers
-  leftCurrent = pow(
-      ValuePosCheck, gearsDriverChip.adcVoltToAmpPow
-      )  * gearsDriverChip.adcVoltToAmpScale;
 
-  ValuePosCheck = (((float)ADC2voltage(analogRead(pinMotorRightSense))) + gearsDriverChip.adcVoltToAmpOfs);
-  if (ValuePosCheck < 0) ValuePosCheck = 0;	// avoid negativ numbers
-  rightCurrent = pow(
-      ValuePosCheck, gearsDriverChip.adcVoltToAmpPow
-      )  * gearsDriverChip.adcVoltToAmpScale;
 
-  ValuePosCheck = (((float)ADC2voltage(analogRead(pinMotorMowSense))) + gearsDriverChip.adcVoltToAmpOfs);
-  if (ValuePosCheck < 0) ValuePosCheck = 0;	// avoid negativ numbers
-  mowCurrent = pow(
-            ValuePosCheck, mowDriverChip.adcVoltToAmpPow
-      )  * mowDriverChip.adcVoltToAmpScale;
-      */
+
 }
 
 void AmMotorDriver::getMotorEncoderTicks(int &leftTicks, int &rightTicks, int &mowTicks){
@@ -724,6 +718,7 @@ void AmMotorDriver::getMotorEncoderTicks(int &leftTicks, int &rightTicks, int &m
   odomTicksLeft = odomTicksRight = odomTicksMow = 0;
 }    
 
+    
 
 
 
