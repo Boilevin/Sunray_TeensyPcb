@@ -630,9 +630,12 @@ void start(){
 
   maps.begin();      
   //maps.clipperTest();
-    
+  //bber 
   // initialize ESP module
-  startWIFI();
+  #ifndef __IMXRT1062__ // teensy
+    startWIFI();
+  #endif
+
   #ifdef ENABLE_NTRIP
     ntrip.begin();  
   #endif

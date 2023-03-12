@@ -653,44 +653,56 @@ void AmMotorDriver::setMotorPwm(int leftPwm, int rightPwm, int mowPwm){
   }  
 }
 
-
-void AmMotorDriver::getMotorFaults(bool &leftFault, bool &rightFault, bool &mowFault){ 
+void AmMotorDriver::getMotorFaults(bool &leftFault, bool &rightFault, bool &mowFault){
+#ifdef MOTOR_DRIVER_BTS7960
   return;
-  /*
-  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive) {
+#else
+
+  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
+  {
     leftFault = true;
   }
-  if  (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive) {
+  if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
+  {
     rightFault = true;
   }
-  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive) {
+  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
+  {
     mowFault = true;
   }
-  */
+
+#endif
 }
 
-void AmMotorDriver::resetMotorFaults(){ 
+void AmMotorDriver::resetMotorFaults(){
+#ifdef MOTOR_DRIVER_BTS7960
   return;
-  /* 
-  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive) {
-    if (gearsDriverChip.resetFaultByToggleEnable){
+#else
+  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
+  {
+    if (gearsDriverChip.resetFaultByToggleEnable)
+    {
       digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
       digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
     }
   }
-  if  (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive) {
-    if (gearsDriverChip.resetFaultByToggleEnable){
+  if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
+  {
+    if (gearsDriverChip.resetFaultByToggleEnable)
+    {
       digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
       digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
     }
   }
-  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive) {
-    if (mowDriverChip.resetFaultByToggleEnable){
+  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
+  {
+    if (mowDriverChip.resetFaultByToggleEnable)
+    {
       digitalWrite(pinMotorMowEnable, !mowDriverChip.enableActive);
       digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
     }
   }
-  */
+#endif
 }
 
 void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){

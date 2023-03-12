@@ -54,7 +54,7 @@ unsigned long nextDumpTime = 0;
 // start IMU sensor and calibrate
 bool startIMU(bool forceIMU){    
   // detect IMU
-  uint8_t data = 0;
+  //uint8_t data = 0;
   int counter = 0;  
   while ((forceIMU) || (counter < 1)){          
      imuDriver.detect();

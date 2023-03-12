@@ -43,13 +43,20 @@ void logResetCause(){
 }
 
 
+
+//bber
+
 // get free memory
 // https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
 int freeMemory() {
+//extern unsigned long _heap_start;
+extern unsigned long _heap_end;
+extern char *__brkval;
 #ifdef __linux__
   return 1000000;
 #else
-  char top;
-  return &top - reinterpret_cast<char*>(sbrk(0));
+  extern char *__brkval;
+  return (char *)&_heap_end - __brkval;
 #endif
 }
+

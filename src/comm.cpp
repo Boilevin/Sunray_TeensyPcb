@@ -56,12 +56,11 @@ unsigned long nextWifiClientCheckTime = 0;
 // answer Bluetooth with CRC
 void cmdAnswer(String s){  
   byte crc = 0;
-  for (int i=0; i < s.length(); i++) crc += s[i];
+  for (unsigned int i=0; i < s.length(); i++) crc += s[i];
   s += F(",0x");
   if (crc <= 0xF) s += F("0");
   s += String(crc, HEX);  
-  s += F("\r\n");             
-  //CONSOLE.print(s);  
+  s += F("\r\n");
   cmdResponse = s;
 }
 
@@ -71,7 +70,7 @@ void cmdTuneParam(){
   int counter = 0;
   int paramIdx = -1;
   int lastCommaIdx = 0;
-  for (int idx=0; idx < cmd.length(); idx++){
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
@@ -112,11 +111,11 @@ void cmdControl(){
   if (cmd.length()<6) return;  
   int counter = 0;
   int lastCommaIdx = 0;
-  int mow=-1;          
+  //int mow=-1;          
   int op = -1;
   bool restartRobot = false;
-  float wayPerc = -1;  
-  for (int idx=0; idx < cmd.length(); idx++){
+  //float wayPerc = -1;  
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
@@ -177,7 +176,7 @@ void cmdMotor(){
   int lastCommaIdx = 0;
   float linear=0;
   float angular=0;
-  for (int idx=0; idx < cmd.length(); idx++){
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
@@ -230,7 +229,7 @@ void cmdWaypoint(){
   float x=0;
   float y=0;
   bool success = true;
-  for (int idx=0; idx < cmd.length(); idx++){
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
@@ -280,13 +279,13 @@ void cmdWayCount(){
   if (cmd.length()<6) return;  
   int counter = 0;
   int lastCommaIdx = 0;
-  for (int idx=0; idx < cmd.length(); idx++){
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
     if ((ch == ',') || (idx == cmd.length()-1)){            
       float intValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toInt();
-      float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();      
+      //float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();      
       if (counter == 1){                            
           if (!maps.setWayCount(WAY_PERIMETER, intValue)) return;                
       } else if (counter == 2){
@@ -315,13 +314,13 @@ void cmdExclusionCount(){
   int counter = 0;
   int lastCommaIdx = 0;
   int widx=0;  
-  for (int idx=0; idx < cmd.length(); idx++){
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
     if ((ch == ',') || (idx == cmd.length()-1)){            
       float intValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toInt();
-      float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();
+      // float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();
       if (counter == 1){                            
           widx = intValue;
       } else if (counter == 2){
@@ -344,7 +343,7 @@ void cmdPosMode(){
   if (cmd.length()<6) return;  
   int counter = 0;
   int lastCommaIdx = 0;  
-  for (int idx=0; idx < cmd.length(); idx++){
+  for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
     //Serial.print("ch=");
     //Serial.println(ch);
@@ -589,7 +588,7 @@ void cmdSummary(){
   cmdAnswer(s);  
 }
 //bber
-// request all 5 motor sense for raspberry pi
+// request all 5 motor sense for raspberry pi and teensy PCB 
 void cmdMotorSense(){
   String s = F("M2,");
   s += motor.motorLeftSenseLP;
@@ -601,11 +600,7 @@ void cmdMotorSense(){
   s += motor.motorMow2SenseLP;
   s += ",";
   s += motor.motorMow3SenseLP;
-  s += ",";
-  s += motor.motorMowSenseLP;
-
-
-
+  
   cmdAnswer(s);  
 }
 
@@ -798,6 +793,9 @@ void cmdFirmwareUpdate(){
 
 // process request
 void processCmd(bool checkCrc, bool decrypt){
+
+//bber for test only without crc
+//checkCrc=false;
   cmdResponse = "";      
   if (cmd.length() < 4) return;
 #ifdef ENABLE_PASS
@@ -806,7 +804,7 @@ void processCmd(bool checkCrc, bool decrypt){
     if ( s != "AT+V"){
       if (encryptMode == 1){
         // decrypt        
-        for (int i=0; i < cmd.length(); i++) {
+        for (unsigned int i=0; i < cmd.length(); i++) {
           if ( (byte(cmd[i]) >= 32) && (byte(cmd[i]) <= 126) ){  // ASCII between 32..126
             int code = byte(cmd[i]);
             code -= encryptKey;
@@ -824,25 +822,35 @@ void processCmd(bool checkCrc, bool decrypt){
 #endif
   byte expectedCrc = 0;
   int idx = cmd.lastIndexOf(',');
+  
   if (idx < 1){
+    
     if (checkCrc){
       CONSOLE.print("COMM CRC ERROR: ");
       CONSOLE.println(cmd);
       return;
     }
   } else {
+
+
+//bber err crc ?????????????????
+
+   
     for (int i=0; i < idx; i++) expectedCrc += cmd[i];  
     String s = cmd.substring(idx+1, idx+5);
+    
     int crc = strtol(s.c_str(), NULL, 16);
     bool crcErr = false;
     simFaultConnCounter++;
     if ((simFaultyConn) && (simFaultConnCounter % 10 == 0)) crcErr = true;
     if ((expectedCrc != crc) && (checkCrc)) crcErr = true;      
     if (crcErr) {
-      CONSOLE.print("CRC ERROR");
+      CONSOLE.print("CRC ERROR : ");
       CONSOLE.print(crc,HEX);
       CONSOLE.print(",");
       CONSOLE.print(expectedCrc,HEX);
+      CONSOLE.print(", on cmd: ");
+      CONSOLE.print(cmd);
       CONSOLE.println();
       return;        
     } else {
@@ -1140,7 +1148,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   CONSOLE.print(topic);
   CONSOLE.print("] ");
   String cmd = ""; 
-  for (int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++) {
     cmd += (char)payload[i];    
   }
   CONSOLE.println(cmd);
@@ -1216,12 +1224,12 @@ void processWifiMqttClient()
       MQTT_PUBLISH(statMowLiftCounter, "%d", "/stats/mow/liftEvents")
       MQTT_PUBLISH(statMowMaxDgpsAge, "%.2f", "/stats/mow/maxDgpsAge")
       MQTT_PUBLISH(statMowDistanceTraveled, "%.1f", "/stats/mow/distanceTraveled")
-      MQTT_PUBLISH(statMowInvalidRecoveries, "%d", "/stats/mow/invalidRecoveries")
+      MQTT_PUBLISH(int(statMowInvalidRecoveries), "%d", "/stats/mow/invalidRecoveries")
       MQTT_PUBLISH(statImuRecoveries, "%d", "/stats/imuRecoveries")
       MQTT_PUBLISH(statGPSJumps, "%d", "/stats/gpsJumps")      
       MQTT_PUBLISH(statTempMin, "%.1f", "/stats/tempMin")
       MQTT_PUBLISH(statTempMax, "%.1f", "/stats/tempMax")
-      MQTT_PUBLISH(stateTemp, "%.1f", "/stats/curTemp")
+      MQTT_PUBLISH(int(stateTemp), "%.1f", "/stats/curTemp")
 
     } else {
       mqttReconnect();  
@@ -1280,21 +1288,23 @@ void outputConsole(){
     CONSOLE.print (" op=");    
     CONSOLE.print (activeOp->getOpChain());    
     //CONSOLE.print (stateOp);
-    #ifdef __linux__
-      CONSOLE.print (" mem=");
-      struct rusage r_usage;
-      getrusage(RUSAGE_SELF,&r_usage);
-      CONSOLE.print(r_usage.ru_maxrss);
-    #else
-      CONSOLE.print (" freem=");
-      //bber
-      /*
-      CONSOLE.print (freeMemory());  
-      uint32_t *spReg = (uint32_t*)__get_MSP();   // stack pointer
-      CONSOLE.print (" sp=");
-      CONSOLE.print (*spReg, HEX);
-      */
-    #endif
+//bber
+#ifdef __linux__
+    CONSOLE.print(" mem=");
+    struct rusage r_usage;
+    getrusage(RUSAGE_SELF, &r_usage);
+    CONSOLE.print(r_usage.ru_maxrss);
+#elif __SAMD51__    // GCM4
+    CONSOLE.print(" freem=");
+    CONSOLE.print(freeMemory());
+    uint32_t *spReg = (uint32_t *)__get_MSP(); // stack pointer
+    CONSOLE.print(" sp=");
+    CONSOLE.print(*spReg, HEX);
+#elif __IMXRT1062__ // teensy
+    CONSOLE.print(" freem=");
+    CONSOLE.print(freeMemory());
+
+#endif
     CONSOLE.print(" bat=");
     CONSOLE.print(battery.batteryVoltage);
     CONSOLE.print(",");

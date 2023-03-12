@@ -183,7 +183,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define MOW_OVERLOAD_CURRENT 2.0    // mowing motor overload current (amps)
 
 // should the direction of mowing motor toggle each start? (yes: true, no: false)
-//#define MOW_TOGGLE_DIR       true
+//#define MOW_TOGGLE_DIR       true // never use with robomow platform mow motor always rotate in the same dir
 #define MOW_TOGGLE_DIR       false
 
 // should the error on motor overload detection be enabled?
@@ -471,7 +471,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
   #define BLE Serial3
   #define GPS Serial4
 #elif __IMXRT1062__  //teensy 4
-  #define WIFI Serial5
+  #define WIFI Serial1
   #define ROBOT Serial2               
   #define BLE Serial1
   #define GPS Serial3
