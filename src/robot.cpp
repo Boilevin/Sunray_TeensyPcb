@@ -53,7 +53,7 @@
 #include "src/test/test.h"
 #include "bumper.h"
 
-// #define I2C_SPEED  10000
+#define I2C_SPEED  400000  //better fo teensy
 #define _BV(x) (1 << (x))
 
 const signed char orientationMatrix[9] = {
@@ -531,7 +531,24 @@ void outputConfig(){
 
 
 // robot start routine
-void start(){    
+void start(){ 
+
+  //bber
+  // for teensy set some serial buffer size to 1024
+  #ifdef __IMXRT1062__  //teensy 
+  unsigned char serial1buffer[2000];
+  Serial3.addMemoryForRead(serial1buffer,1024);
+  Serial3.addMemoryForWrite(serial1buffer,1024);
+  /*
+  unsigned char serial2buffer[2000];
+  Serial3.addMemoryForRead(serial2buffer,1024);
+  Serial3.addMemoryForWrite(serial2buffer,1024);
+  unsigned char serial3buffer[2000];
+  Serial3.addMemoryForRead(serial3buffer,1024);
+  Serial3.addMemoryForWrite(serial3buffer,1024);
+  */
+  #endif
+
   pinMan.begin();         
   // keep battery switched ON
   batteryDriver.begin();  
@@ -539,39 +556,51 @@ void start(){
   buzzerDriver.begin();
   buzzer.begin();      
     
-  Wire.begin();      
-  analogReadResolution(12);  // configure ADC 12 bit resolution
-  unsigned long timeout = millis() + 2000;
-  while (millis() < timeout){
-    if (!checkAT24C32()){
-      CONSOLE.println(F("PCB not powered ON or RTC module missing"));      
-      I2Creset();  
-      Wire.begin();    
-      #ifdef I2C_SPEED
-        Wire.setClock(I2C_SPEED);     
-      #endif
-    } else break;
-  }  
+  Wire.begin(); 
   
-  // give Arduino IDE users some time to open serial console to actually see very first console messages
-  #ifndef __linux__
-    delay(1500);
-  #endif
-    
-  #if defined(ENABLE_SD)
-    #ifdef __linux__
-      bool res = SD.begin();
-    #else 
-      bool res = SD.begin(SDCARD_SS_PIN);
-    #endif    
-    if (res){
-      CONSOLE.println("SD card found!");
-      #if defined(ENABLE_SD_LOG)        
-        sdSerial.beginSD();  
-      #endif
-    } else {
-      CONSOLE.println("no SD card found");                
-    }    
+  analogReadResolution(12);  // configure ADC 12 bit resolution
+  //unsigned long timeout = millis() + 2000;
+
+#ifndef __IMXRT1062__ // teensy
+
+  while (millis() < timeout)
+  {
+    if (!checkAT24C32())
+    {
+      CONSOLE.println(F("PCB not powered ON or RTC module missing"));
+      I2Creset();
+      Wire.begin();
+#ifdef I2C_SPEED
+      Wire.setClock(I2C_SPEED);
+#endif
+    }
+    else
+      break;
+  }
+
+#endif
+// give Arduino IDE users some time to open serial console to actually see very first console messages
+#ifndef __linux__
+  delay(1500);
+#endif
+
+#if defined(ENABLE_SD)
+#ifdef __linux__
+  bool res = SD.begin();
+#else
+  bool res = SD.begin(SDCARD_SS_PIN);
+#endif
+  if (res)
+  {
+    CONSOLE.println("SD card found!");
+#if defined(ENABLE_SD_LOG)
+    sdSerial.beginSD();
+#endif
+  }
+  else
+  {
+    CONSOLE.println("no SD card found");
+  }    
   #endif 
   
   logResetCause();
@@ -592,7 +621,7 @@ void start(){
   stopButton.begin();
 
   bleConfig.run();   
-  //BLE.println(VER); is this needed? can confuse BLE modules if not connected?  
+  BLE.println(VER); //is this needed? can confuse BLE modules if not connected?  
     
   rcmodel.begin();  
   motor.begin();
@@ -624,17 +653,18 @@ void start(){
   
   #ifdef GPS_USE_TCP
     gps.begin(gpsClient, GPS_HOST, GPS_PORT);
+
   #else 
-    gps.begin(GPS, GPS_BAUDRATE);   
+    gps.begin(GPS, GPS_BAUDRATE); 
   #endif
 
   maps.begin();      
   //maps.clipperTest();
   //bber 
   // initialize ESP module
-  #ifndef __IMXRT1062__ // teensy
+ // #ifndef __IMXRT1062__ // teensy
     startWIFI();
-  #endif
+ // #endif
 
   #ifdef ENABLE_NTRIP
     ntrip.begin();  
@@ -898,13 +928,25 @@ void run(){
   }
   
   // IMU
-  if (millis() > nextImuTime){
-    nextImuTime = millis() + 150;        
-    //imu.resetFifo();    
-    if (imuIsCalibrating) {
-      activeOp->onImuCalibration();             
-    } else {
-      readIMU();    
+  if (millis() > nextImuTime)
+  {
+    nextImuTime = millis() + 150;
+    // imu.resetFifo();
+    if (imuIsCalibrating)
+    {
+      activeOp->onImuCalibration();
+    }
+    else
+    {
+      unsigned long StartReadAt = millis();
+      readIMU();
+      unsigned long EndReadAt = millis();
+      unsigned long ReadDuration = EndReadAt - StartReadAt;
+      if (ReadDuration > 30)
+      {
+        CONSOLE.println("Error reading IMU too long duration need < 30 : ");
+        CONSOLE.println(ReadDuration);
+      }
     }
   }
 
@@ -918,10 +960,16 @@ void run(){
 
   gps.run();
     
-  calcStats();  
-  
-  
-  if (millis() >= nextControlTime){        
+  calcStats();
+
+  if (millis() >= nextControlTime)
+  {
+    if (millis()-nextControlTime > 15)
+    {
+      CONSOLE.print("Control time too long duration need < 15 ms : ");
+      CONSOLE.println(millis()-nextControlTime);
+    }
+
     nextControlTime = millis() + 20; 
     controlLoops++;    
     
@@ -1029,10 +1077,10 @@ void run(){
     }
 
     // update operation type      
-    stateOp = activeOp->getGoalOperationType();  
-            
-  }   // if (millis() >= nextControlTime)
-    
+    stateOp = activeOp->getGoalOperationType();
+
+  } // if (millis() >= nextControlTime)
+
   // ----- read serial input (BT/console) -------------
   processComm();
   outputConsole();       

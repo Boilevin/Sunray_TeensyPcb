@@ -157,7 +157,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 
 #define MOTOR_FAULT_CURRENT 6.0    // gear motors fault current (amps)
-#define MOTOR_OVERLOAD_CURRENT 0.8    // gear motors overload current (amps)
+#define MOTOR_OVERLOAD_CURRENT 2    // gear motors overload current (amps)
 
 #define USE_LINEAR_SPEED_RAMP  true      // use a speed ramp for the linear speed
 //#define USE_LINEAR_SPEED_RAMP  false      // do not use a speed ramp 
@@ -180,7 +180,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define MAX_MOW_PWM 200  // use this to permanently reduce mowing motor power (255=max)
 
 #define MOW_FAULT_CURRENT 8.0       // mowing motor fault current (amps)
-#define MOW_OVERLOAD_CURRENT 2.0    // mowing motor overload current (amps)
+#define MOW_OVERLOAD_CURRENT 4.0    // mowing motor overload current (amps)
 
 // should the direction of mowing motor toggle each start? (yes: true, no: false)
 //#define MOW_TOGGLE_DIR       true // never use with robomow platform mow motor always rotate in the same dir
@@ -320,8 +320,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define GPS_USE_TCP 1                    // comment out for serial gps, activate for TCP client-based GPS
 //#define GPS_SKYTRAQ  1               // comment out for ublox gps, uncomment for skytraq gps/NMEA
 
-//#define REQUIRE_VALID_GPS  true       // mower will pause if no float and no fix GPS solution during mowing (recommended)
-#define REQUIRE_VALID_GPS  false    // mower will continue to mow if no float or no fix solution (not recommended)
+#define REQUIRE_VALID_GPS  true       // mower will pause if no float and no fix GPS solution during mowing (recommended)
+//#define REQUIRE_VALID_GPS  false    // mower will continue to mow if no float or no fix solution (not recommended)
 
 //#define GPS_SPEED_DETECTION true  // will detect obstacles via GPS feedback (no speed)  - recommended
 #define GPS_SPEED_DETECTION false
@@ -337,8 +337,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
 #define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
-//#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
+#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+//#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 //#define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 #define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)

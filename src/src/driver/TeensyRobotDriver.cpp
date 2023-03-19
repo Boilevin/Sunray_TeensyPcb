@@ -443,7 +443,7 @@ void AmMotorDriver::begin(){
   leftSpeedSign = rightSpeedSign = mowSpeedSign = 1;
   lastRightPwm = lastLeftPwm = lastMowPwm = 0;
 
-  CONSOLE.print ("Starting Ina226 current sensor ");
+  CONSOLE.println ("Starting Ina226 current sensor ");
   //remember 2 i2c line with 3 ina226 on them ,soit same i2c adress 2 time
   MotLeftIna226.begin(0x41);
   ChargeIna226.begin(0x40);
@@ -452,38 +452,38 @@ void AmMotorDriver::begin(){
   LeftMowIna226.begin_I2C1(0x41);  //MOW2 is connect on I2C1
   RightMowIna226.begin_I2C1(0x44);  //MOW3 is connect on I2C1
 
-  CONSOLE.print ("Checking  ina226 current sensor connection");
+  CONSOLE.println ("Checking  ina226 current sensor connection");
   //check sense powerboard i2c connection
   powerboard_I2c_line_Ok = true;
   if (!ChargeIna226.isConnected(0x40)) {
-    CONSOLE.print("INA226 Battery Charge is not OK");
+    CONSOLE.println("INA226 Battery Charge is not OK");
     powerboard_I2c_line_Ok = false;
   }
   if (!MotRightIna226.isConnected(0x44)) {
-    CONSOLE.print("INA226 Motor Right is not OK");
+    CONSOLE.println("INA226 Motor Right is not OK");
     powerboard_I2c_line_Ok = false;
   }
   if (!MotLeftIna226.isConnected(0x41)) {
-    CONSOLE.print("INA226 Motor Left is not OK");
+    CONSOLE.println("INA226 Motor Left is not OK");
     powerboard_I2c_line_Ok = false;
   }
   if (!CenterMowIna226.isConnected_I2C1(0x40)) {
-    CONSOLE.print("INA226 MOW1 is not OK");
+    CONSOLE.println("INA226 MOW1 is not OK");
     powerboard_I2c_line_Ok = false;
   }
   if ( (!LeftMowIna226.isConnected_I2C1(0x41))) {
-    CONSOLE.print("INA226 MOW2 is not OK");
+    CONSOLE.println("INA226 MOW2 is not OK");
     powerboard_I2c_line_Ok = false;
   }
   if ((!RightMowIna226.isConnected_I2C1(0x44))) {
-    CONSOLE.print("INA226 MOW3 is not OK");
+    CONSOLE.println("INA226 MOW3 is not OK");
     powerboard_I2c_line_Ok = false;
   }
 
 
   if (powerboard_I2c_line_Ok)
   {
-    CONSOLE.print ("Ina226 Begin OK ");
+    CONSOLE.println ("All Ina226 are OK ");
     // Configure INA226
 
 
@@ -495,7 +495,7 @@ void AmMotorDriver::begin(){
     LeftMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
     RightMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
 
-    CONSOLE.print ("Ina226 Configure OK ");
+    CONSOLE.println ("Ina226 Configure OK ");
     // Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A
     ChargeIna226.calibrate(0.02, 4);
     MotLeftIna226.calibrate(0.02, 4);
@@ -505,12 +505,12 @@ void AmMotorDriver::begin(){
     LeftMowIna226.calibrate_I2C1(0.02, 4);
     RightMowIna226.calibrate_I2C1(0.02, 4);
 
-    CONSOLE.print ("Ina226 Calibration OK ");
+    CONSOLE.println ("Ina226 Calibration OK ");
   }
   else
   {
-    CONSOLE.print ("************** WARNING **************");
-    CONSOLE.print ("INA226 powerboard connection is not OK");
+    CONSOLE.println ("************** WARNING **************");
+    CONSOLE.println ("INA226 powerboard connection is not OK");
   }
 
 

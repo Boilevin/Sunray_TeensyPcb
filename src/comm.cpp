@@ -871,12 +871,14 @@ void processCmd(bool checkCrc, bool decrypt){
   }
   //bber
   if (cmd[3] == 'M') {
+    cmdMotor();
+    /*
     if (cmd.length() <= 4){
       cmdMotor(); 
     } else {
       if (cmd[4] == '2') cmdMotorSense();      
     }
-    
+    */
   }
 
   if (cmd[3] == 'C'){ 
