@@ -53,7 +53,7 @@
 #include "src/test/test.h"
 #include "bumper.h"
 
-#define I2C_SPEED  400000  //better fo teensy
+#define I2C_SPEED  400000  //maybe better fo teensy
 #define _BV(x) (1 << (x))
 
 const signed char orientationMatrix[9] = {
@@ -587,6 +587,9 @@ void start(){
 #if defined(ENABLE_SD)
 #ifdef __linux__
   bool res = SD.begin();
+#elif __IMXRT1062__  //teensy 4
+  const int chipSelect = BUILTIN_SDCARD;
+  bool res = SD.begin(chipSelect);
 #else
   bool res = SD.begin(SDCARD_SS_PIN);
 #endif
@@ -879,14 +882,34 @@ bool detectObstacleRotation(){
 
 
 // robot main loop
-void run(){  
-  #ifdef ENABLE_NTRIP
+void run(){
+  //bber
+  unsigned long StartReadAt = 0;
+  unsigned long EndReadAt = 0;
+  unsigned long ReadDuration = 0;
+
+#ifdef ENABLE_NTRIP
     ntrip.run();
   #endif
   #ifdef DRV_SIM_ROBOT
     tester.run();
   #endif
+
+
+  StartReadAt = millis();
   robotDriver.run();
+  EndReadAt = millis();
+  ReadDuration = EndReadAt - StartReadAt;
+  if (ReadDuration > 10)
+  {
+    CONSOLE.println("Reading robot driver too long duration need < 10 : ");
+    CONSOLE.println(ReadDuration);
+  }
+
+
+
+  
+
   buzzer.run();
   buzzerDriver.run();
   stopButton.run();
@@ -897,7 +920,17 @@ void run(){
   liftDriver.run();
   motor.run();
   sonar.run();
-  maps.run();  
+
+  StartReadAt = millis();
+  maps.run();
+  EndReadAt = millis();
+  ReadDuration = EndReadAt - StartReadAt;
+  if (ReadDuration > 10)
+  {
+    CONSOLE.println("Reading maps too long duration need < 10 : ");
+    CONSOLE.println(ReadDuration);
+  }
+
   rcmodel.run();
   bumper.run();
   
@@ -938,10 +971,10 @@ void run(){
     }
     else
     {
-      unsigned long StartReadAt = millis();
+      StartReadAt = millis();
       readIMU();
-      unsigned long EndReadAt = millis();
-      unsigned long ReadDuration = EndReadAt - StartReadAt;
+      EndReadAt = millis();
+      ReadDuration = EndReadAt - StartReadAt;
       if (ReadDuration > 30)
       {
         CONSOLE.println("Error reading IMU too long duration need < 30 : ");

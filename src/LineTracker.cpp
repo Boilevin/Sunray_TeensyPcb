@@ -342,7 +342,7 @@ void trackLine(bool runControl){
     rotateLeft = false;
     rotateRight = false;
     activeOp->onTargetReached();
-    bool straight = maps.nextPointIsStraight();
+    //bool straight = maps.nextPointIsStraight();
     if (!maps.nextPoint(false,stateX,stateY)){
       // finish        
       activeOp->onNoFurtherWaypoints();      

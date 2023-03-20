@@ -98,9 +98,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //  via 'File->Preferences->Full output during compile') - detailed steps here:  
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_module
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_logging
-//#define ENABLE_SD      1                 // enable SD card services (resuming, logging)? (uncomment to activate)
+#define ENABLE_SD      1                 // enable SD card services (resuming, logging)? (uncomment to activate)
 //#define ENABLE_SD_LOG  1                 // enable SD card logging? uncomment to activate (not recommended - WARNING: may slow down system!)
-//#define ENABLE_SD_RESUME  1              // enable SD card map load/resume on reset? (uncomment to activate)
+#define ENABLE_SD_RESUME  1              // enable SD card map load/resume on reset? (uncomment to activate)
 
 
 // ------ odometry -----------------------------------
@@ -678,7 +678,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // 1. Arduino IDE->File->Preferences->Click on 'preferences.txt' at the bottom
 // 2. Locate file 'packages/arduino/hardware/sam/xxxxx/cores/arduino/RingBuffer.h
   
-#define SERIAL_BUFFER_SIZE 1024
+#define SERIAL_BUFFER_SIZE 4096
 
 #ifdef BNO055
   #define MPU9250   // just to make mpu driver happy to compile something
