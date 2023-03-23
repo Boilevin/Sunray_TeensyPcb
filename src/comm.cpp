@@ -963,6 +963,11 @@ void processBLE(){
         cmd = "";
       } else if (cmd.length() < 500){
         cmd += ch;
+
+//bber what s append if > 500 bytes incomming without cr/lf (normaly not possible but !!!!!)
+
+
+
       }
     }    
   } else {
