@@ -137,6 +137,7 @@ class INA226
     bool isAlert(void);
 
     float readShuntCurrent(void);
+    float readShuntCurrent_I2C1(void);
     float readShuntVoltage(void);
     float readBusPower(void);
     float readBusPower_I2C1(void);

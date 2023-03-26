@@ -50,7 +50,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #ifdef __cplusplus
   #include "udpserial.h"
   #include "sdserial.h"
-  #include "src/agcm4/adafruit_grand_central.h"
+ // #include "src/agcm4/adafruit_grand_central.h"
   #ifdef __linux__
     #include "src/linux/linux.h"    
     #include <Console.h>
@@ -177,7 +177,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // certain time (normally a few seconds) and the mower will try again and set a virtual obstacle after too many tries
 // On the other hand, the overload detection will detect situations the fault signal cannot detect: slightly higher current for a longer time 
 
-//#define MAX_MOW_PWM 200  // use this to permanently reduce mowing motor power (255=max)
+#define MAX_MOW_PWM 150  // use this to permanently reduce mowing motor power (255=max)
 
 #define MOW_FAULT_CURRENT 8.0       // mowing motor fault current (amps)
 #define MOW_OVERLOAD_CURRENT 4.0    // mowing motor overload current (amps)

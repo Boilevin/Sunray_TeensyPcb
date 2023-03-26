@@ -706,17 +706,28 @@ void AmMotorDriver::resetMotorFaults(){
 }
 
 void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){
-  // current (amps)= ((ADCvoltage + ofs)^pow) * scale
+  
       //bber
-      rightCurrent=MotLeftIna226.readShuntCurrent() ;
-      leftCurrent= MotRightIna226.readShuntCurrent() ;
-      mow1Current = CenterMowIna226.readShuntCurrent() ;
-	    mow2Current = LeftMowIna226.readShuntCurrent() ;
-	    mow3Current = RightMowIna226.readShuntCurrent() ;
+      rightCurrent = MotLeftIna226.readShuntCurrent() ;
+      leftCurrent = MotRightIna226.readShuntCurrent() ;
+      mow1Current = CenterMowIna226.readShuntCurrent_I2C1() ;
+	    mow2Current = LeftMowIna226.readShuntCurrent_I2C1() ;
+	    mow3Current = RightMowIna226.readShuntCurrent_I2C1() ;
 
   	  float motorMowCurrent = max(mow1Current, mow2Current); //find the biggest one
 	    mowCurrent = max(motorMowCurrent, mow3Current);	
-
+      /*
+  CONSOLE.print("Left :");
+  CONSOLE.print(leftCurrent);
+  CONSOLE.print(" Right :");
+  CONSOLE.println(rightCurrent);
+  CONSOLE.print("mow1 :");
+  CONSOLE.print(mow1Current);
+  CONSOLE.print(" mow2 :");
+  CONSOLE.print(mow2Current);
+  CONSOLE.print(" mow3 :");
+  CONSOLE.println(mow3Current);
+*/
 
 
 

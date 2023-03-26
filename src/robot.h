@@ -169,6 +169,8 @@ extern Map maps;
 #endif
 
 int freeMemory();
+void myCallback();
+void watchdogReset();
 void start();
 void run();
 void setOperation(OperationType op, bool allowRepeat = false);

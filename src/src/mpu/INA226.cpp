@@ -181,7 +181,10 @@ float INA226::readBusPower_I2C1(void)
     return (readRegister16_I2C1(INA226_REG_POWER) * powerLSB);
 }
 
-
+float INA226::readShuntCurrent_I2C1(void)
+{
+    return (readRegister16_I2C1(INA226_REG_CURRENT) * currentLSB);
+}
 
 float INA226::readShuntCurrent(void)
 {

@@ -1271,7 +1271,7 @@ void outputConsole(){
   //return;
   if (millis() > nextInfoTime){        
     bool started = (nextInfoTime == 0);
-    nextInfoTime = millis() + 5000;                   
+    nextInfoTime = millis() + 60000;                   
     unsigned long totalsecs = millis()/1000;
     unsigned long totalmins = totalsecs/60;
     unsigned long hour = totalmins/60;

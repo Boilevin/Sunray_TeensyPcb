@@ -1865,7 +1865,7 @@ bool Map::findPath(Point &src, Point &dst){
       if (millis() >= nextProgressTime){
         nextProgressTime = millis() + 4000;          
         CONSOLE.print(".");
-        //bber watchdogReset();     
+        watchdogReset();     
       }
       timeout--;            
       if (timeout == 0){
@@ -1916,7 +1916,7 @@ bool Map::findPath(Point &src, Point &dst){
         if (millis() >= nextProgressTime){
           nextProgressTime = millis() + 4000;          
           CONSOLE.print("+");
-          //bber watchdogReset();     
+          watchdogReset();     
         }
         //CONSOLE.print("neighbor=");
         //CONSOLE.print(neighborIdx);

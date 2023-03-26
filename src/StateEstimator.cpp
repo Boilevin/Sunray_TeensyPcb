@@ -76,7 +76,7 @@ bool startIMU(bool forceIMU){
        //buzzer.sound(SND_STUCK, true);            
        return false;
      }
-     //bber watchdogReset();          
+     watchdogReset();          
   }  
   if (!imuDriver.imuFound) return false;  
   counter = 0;  
@@ -94,7 +94,7 @@ bool startIMU(bool forceIMU){
       //buzzer.sound(SND_STUCK, true);            
       return false;
     }
-    //bber watchdogReset();     
+    watchdogReset();     
   }              
   imuIsCalibrating = true;   
   nextImuCalibrationSecond = millis() + 1000;

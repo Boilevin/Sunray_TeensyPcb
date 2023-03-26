@@ -27,12 +27,15 @@
 #include "ble.h"
 #include "motor.h"
 
-#ifdef _SAM3XA_  //due
+#ifdef _SAM3XA_ // due
   #include "src/driver/AmRobotDriver.h"
-#elif __SAMD51__ //GCM4
+#elif __SAMD51__ // GCM4
   #include "src/driver/AmRobotDriver.h"
-#elif __IMXRT1062__  //teensy 
+#elif __IMXRT1062__ // teensy
   #include "src/driver/TeensyRobotDriver.h"
+  // the watchdog part
+  #include <Watchdog_t4.h>
+  WDT_T4<WDT1> wdt;
 #endif
 
 #include "src/driver/SerialRobotDriver.h"
@@ -253,7 +256,7 @@ void sensorTest(){
       #endif  
 	
       CONSOLE.println();  
-      //bber watchdogReset();
+      watchdogReset();
       robotDriver.run();   
     }
   }
@@ -529,25 +532,27 @@ void outputConfig(){
   #endif
 }
 
+void watchdogReset(){
+  wdt.feed();
+}
+
+void myCallback() {
+
+  CONSOLE.println("warning Watchdog detect that loops take too long duration ");
+  CONSOLE.println("Tennsy can automaticly reboot if issue is not reset ");
+  // try to stop everything imediatly
+  //robot.setNextState(STATE_OFF, 0);
+  return;
+
+}
+
 
 // robot start routine
 void start(){ 
 
   //bber
   // for teensy set some serial buffer size to 1024
-  #ifdef __IMXRT1062__  //teensy 
-  unsigned char serial1buffer[2000];
-  Serial3.addMemoryForRead(serial1buffer,1024);
-  Serial3.addMemoryForWrite(serial1buffer,1024);
-  /*
-  unsigned char serial2buffer[2000];
-  Serial3.addMemoryForRead(serial2buffer,1024);
-  Serial3.addMemoryForWrite(serial2buffer,1024);
-  unsigned char serial3buffer[2000];
-  Serial3.addMemoryForRead(serial3buffer,1024);
-  Serial3.addMemoryForWrite(serial3buffer,1024);
-  */
-  #endif
+  
 
   pinMan.begin();         
   // keep battery switched ON
@@ -557,6 +562,7 @@ void start(){
   buzzer.begin();      
     
   Wire.begin(); 
+   
   
   analogReadResolution(12);  // configure ADC 12 bit resolution
   //unsigned long timeout = millis() + 2000;
@@ -663,11 +669,8 @@ void start(){
 
   maps.begin();      
   //maps.clipperTest();
-  //bber 
-  // initialize ESP module
- // #ifndef __IMXRT1062__ // teensy
-    startWIFI();
- // #endif
+  startWIFI();
+ 
 
   #ifdef ENABLE_NTRIP
     ntrip.begin();  
@@ -685,6 +688,32 @@ void start(){
     robotDriver.setSimRobotPosState(stateX, stateY, stateDelta);
     tester.begin();
   #endif
+
+#ifdef __IMXRT1062__ // teensy
+    unsigned char serial1buffer[2000];
+    Serial3.addMemoryForRead(serial1buffer, 1024);
+    Serial3.addMemoryForWrite(serial1buffer, 1024);
+    /*
+    unsigned char serial2buffer[2000];
+    Serial3.addMemoryForRead(serial2buffer,1024);
+    Serial3.addMemoryForWrite(serial2buffer,1024);
+    unsigned char serial3buffer[2000];
+    Serial3.addMemoryForRead(serial3buffer,1024);
+    Serial3.addMemoryForWrite(serial3buffer,1024);
+    */
+
+    // watchdog part locate after all other task start to avoid trig 
+    // if wdt is not reset during the trigger duration a myCallback function start.
+    // if after timeout wdt is always not reset tennsy reboot
+
+    CONSOLE.println("Watchdog configuration start ");
+    WDT_timings_t config;
+    config.trigger = 2;  /* in seconds, 0->128 */
+    config.timeout = 10; /* in seconds, 0->128 */
+    config.callback = myCallback;
+    wdt.begin(config);
+    CONSOLE.println("Watchdog configuration Finish ");
+#endif
 }
 
 
@@ -1117,7 +1146,7 @@ void run(){
   // ----- read serial input (BT/console) -------------
   processComm();
   outputConsole();       
-  //bber watchdogReset();
+  watchdogReset();
 
   // compute button state (stateButton)
   if (BUTTON_CONTROL){

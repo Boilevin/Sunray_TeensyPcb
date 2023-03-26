@@ -465,21 +465,23 @@ bool Motor::checkMowRpmFault(){
 // measure motor currents
 void Motor::sense(){
   if (millis() < nextSenseTime) return;
-  nextSenseTime = millis() + 20;
+  nextSenseTime = millis() + 100;  //20 ms on 
   motorDriver.getMotorCurrent(motorLeftSense, motorRightSense, motorMowSense, motorMow1Sense, motorMow2Sense, motorMow3Sense);
-  float lp = 0.995; // 0.9
+  float lp = 0.90; // need lower filter on ina226 : already done by chip
   motorRightSenseLP = lp * motorRightSenseLP + (1.0-lp) * motorRightSense;
   motorLeftSenseLP = lp * motorLeftSenseLP + (1.0-lp) * motorLeftSense;
-  motorMowSenseLP = lp * motorMowSenseLP + (1.0-lp) * motorMowSense; 
-  //bber
+//bber
   motorMow1SenseLP = lp * motorMow1SenseLP + (1.0-lp) * motorMow1Sense; 
   motorMow2SenseLP = lp * motorMow2SenseLP + (1.0-lp) * motorMow2Sense; 
   motorMow3SenseLP = lp * motorMow3SenseLP + (1.0-lp) * motorMow3Sense; 
 
+  motorMowSenseLP = lp * motorMowSenseLP + (1.0-lp) * motorMowSense; 
+  
+
   motorsSenseLP = motorRightSenseLP + motorLeftSenseLP + motorMowSenseLP;
   motorRightPWMCurrLP = lp * motorRightPWMCurrLP + (1.0-lp) * ((float)motorRightPWMCurr);
   motorLeftPWMCurrLP = lp * motorLeftPWMCurrLP + (1.0-lp) * ((float)motorLeftPWMCurr);
-  lp = 0.99;
+  lp = 0.90;// need lower filter on ina226 : already done by chip
   motorMowPWMCurrLP = lp * motorMowPWMCurrLP + (1.0-lp) * ((float)motorMowPWMCurr); 
  
   // compute normalized current (normalized to 1g gravity)
@@ -637,7 +639,7 @@ void Motor::test(){
       speedPWM(pwmLeft, pwmRight, 0);
       sense();
       //delay(50);         
-      //bber watchdogReset();     
+      watchdogReset(); 
       robotDriver.run();
     }
   }  
@@ -723,7 +725,7 @@ void Motor::plot(){
     }  
     //sense();
     //delay(10);
-    //bber watchdogReset();     
+    watchdogReset();     
     robotDriver.run(); 
   }
   speedPWM(0, 0, 0);
