@@ -577,6 +577,9 @@ void cmdSummary(){
   s += maps.mapCRC;
   s += ",";
   s += lateralError;
+  s += ",";
+  s += loopsPerSec;
+
   /*
   s += ",";
   s += motor.motorLeftSenseLP;

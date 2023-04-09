@@ -126,6 +126,10 @@ OperationType stateOp = OP_IDLE; // operation-mode
 Sensor stateSensor = SENS_NONE; // last triggered sensor
 
 unsigned long controlLoops = 0;
+//bber
+unsigned long loopsPerSec = 0;
+unsigned long loopsPerSecCounter = 0;
+
 String stateOpText = "";  // current operation as text
 String gpsSolText = ""; // current gps solution as text
 float stateTemp = 20; // degreeC
@@ -152,6 +156,8 @@ unsigned long angularMotionStartTime = 0;
 unsigned long overallMotionTimeout = 0;
 unsigned long nextControlTime = 0;
 unsigned long lastComputeTime = 0;
+//bber
+unsigned long nextTimeInfo = 0;
 
 unsigned long nextLedTime = 0;
 unsigned long nextImuTime = 0;
@@ -553,6 +559,7 @@ void start(){
   //bber
   // for teensy set some serial buffer size to 1024
   
+  
 
   pinMan.begin();         
   // keep battery switched ON
@@ -918,12 +925,11 @@ void run(){
   unsigned long ReadDuration = 0;
 
 #ifdef ENABLE_NTRIP
-    ntrip.run();
-  #endif
-  #ifdef DRV_SIM_ROBOT
-    tester.run();
-  #endif
-
+  ntrip.run();
+#endif
+#ifdef DRV_SIM_ROBOT
+  tester.run();
+#endif
 
   StartReadAt = millis();
   robotDriver.run();
@@ -992,7 +998,7 @@ void run(){
   // IMU
   if (millis() > nextImuTime)
   {
-    nextImuTime = millis() + 150;
+    nextImuTime = millis() + 50;
     // imu.resetFifo();
     if (imuIsCalibrating)
     {
@@ -1026,9 +1032,9 @@ void run(){
 
   if (millis() >= nextControlTime)
   {
-    if (millis()-nextControlTime > 15)
+    if (millis()-nextControlTime > 18)
     {
-      CONSOLE.print("Control time too long duration need < 15 ms : ");
+      CONSOLE.print("Exceed Control time duration better if < 18 ms : ");
       CONSOLE.println(millis()-nextControlTime);
     }
 
@@ -1170,7 +1176,21 @@ void run(){
         CONSOLE.println(stateButton);
       }
     }
-  }    
+  } 
+
+  //bber
+  if (millis() >= nextTimeInfo) {
+    if ((millis() - nextTimeInfo > 250)) {
+      
+        CONSOLE.print("------ LOOP NOT OK DUE IS OVERLOAD -- Over 1 sec ");
+        CONSOLE.println((millis() - nextTimeInfo));
+      
+    }
+    nextTimeInfo = millis() + 1000; //1000
+    loopsPerSec = loopsPerSecCounter;
+    loopsPerSecCounter = 0;
+  }
+  loopsPerSecCounter++;   
 }        
 
 

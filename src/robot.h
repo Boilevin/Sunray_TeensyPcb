@@ -112,6 +112,9 @@ extern bool hasClient;
 extern unsigned long controlLoops;
 extern bool wifiFound;
 extern int motorErrorCounter;
+extern unsigned long loopsPerSec;
+extern unsigned long loopsPerSecCounter;
+
 
 
 #ifdef DRV_SERIAL_ROBOT
