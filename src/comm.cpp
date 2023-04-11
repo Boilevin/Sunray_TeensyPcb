@@ -475,7 +475,9 @@ void cmdGNSSReboot(){
 // switch-off robot
 void cmdSwitchOffRobot(){
   String s = F("Y3");
-  cmdAnswer(s);  
+  //bber
+  CONSOLE.println(s); //i don't know why but no feedback when sunray app send poweroff, so i add it here
+  cmdAnswer(s); 
   setOperation(OP_IDLE);
   battery.switchOff();
 }

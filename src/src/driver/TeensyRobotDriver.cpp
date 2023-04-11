@@ -861,12 +861,13 @@ void AmBatteryDriver::enableCharging(bool flag){
 
 void AmBatteryDriver::keepPowerOn(bool flag){
   if (!flag){ //power off need a delay to leave raspberry pi poweroff also
-    for (int i=0 ;i=30;i++){
+      for (int i = 0; i < 30; i++)
+      {
       delay(1000);
       watchdogReset();
       CONSOLE.print("Countdown before Power OFF : ");
       CONSOLE.println(i);
-    }
+      }
   }
   digitalWrite(pinBatterySwitch, flag);
 }

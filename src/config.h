@@ -280,7 +280,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // https://wiki.ardumower.de/index.php?title=Bumper_sensor
 // https://wiki.ardumower.de/index.php?title=Free_wheel_sensor
 //#define BUMPER_ENABLE true
-#define BUMPER_ENABLE false
+#define BUMPER_ENABLE true
 #define BUMPER_DEADTIME 1000  // linear motion dead-time (ms) after bumper is allowed to trigger
 #define BUMPER_TRIGGER_DELAY  0 // bumper must be active for (ms) to trigger
 #define BUMPER_MAX_TRIGGER_TIME 30  // if bumpersensor stays permanent triggered mower will stop with bumper error (time in seconds; 0 = disabled)
@@ -296,7 +296,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define CURRENT_FACTOR 1.98   // PCB1.4 (non-bridged INA169, max. 2.5A)
 //#define CURRENT_FACTOR 2.941  // PCB1.4 (bridged INA169, max. 5A)
 
-#define GO_HOME_VOLTAGE   21.5  // start going to dock below this voltage
+#define GO_HOME_VOLTAGE   22.5  // start going to dock below this voltage
 // The battery will charge if both battery voltage is below that value and charging current is above that value.
 #define BAT_FULL_VOLTAGE  28.7  // start mowing again at this voltage
 #define BAT_FULL_CURRENT  0.2   // start mowing again below this charging current (amps)
@@ -323,12 +323,12 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define REQUIRE_VALID_GPS  true       // mower will pause if no float and no fix GPS solution during mowing (recommended)
 //#define REQUIRE_VALID_GPS  false    // mower will continue to mow if no float or no fix solution (not recommended)
 
-//#define GPS_SPEED_DETECTION true  // will detect obstacles via GPS feedback (no speed)  - recommended
-#define GPS_SPEED_DETECTION false
+#define GPS_SPEED_DETECTION true  // will detect obstacles via GPS feedback (no speed)  - recommended
+//#define GPS_SPEED_DETECTION false
 
 // detect if robot is actually moving (obstacle detection via GPS feedback)
-//#define GPS_MOTION_DETECTION          true    // if robot is not moving trigger obstacle avoidance (recommended)
-#define GPS_MOTION_DETECTION        false   // ignore if robot is not moving
+#define GPS_MOTION_DETECTION          true    // if robot is not moving trigger obstacle avoidance (recommended)
+//#define GPS_MOTION_DETECTION        false   // ignore if robot is not moving
 #define GPS_MOTION_DETECTION_TIMEOUT  5      // timeout for motion (secs)
 
 // configure ublox f9p with optimal settings (will be stored in f9p RAM only)
@@ -371,8 +371,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 // ------ docking --------------------------------------
 // is a docking station available?
-//#define DOCKING_STATION true   // use this if docking station available and mower should dock automatically
-#define DOCKING_STATION false    // mower will just stop after mowing instead of docking automatically 
+#define DOCKING_STATION true   // use this if docking station available and mower should dock automatically
+//#define DOCKING_STATION false    // mower will just stop after mowing instead of docking automatically 
 
 #define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
 //#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
@@ -383,9 +383,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define DOCK_RETRY_TOUCH true   // robot will retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 #define DOCK_RETRY_TOUCH false   // robot will not retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 
-#define DOCK_UNDOCK_TRACKSLOW_DISTANCE 5 // set distance (m) from dock for trackslow (speed limit)
+#define DOCK_UNDOCK_TRACKSLOW_DISTANCE 2 // set distance (m) from dock for trackslow (speed limit)
 
-#define UNDOCK_IGNORE_GPS_DISTANCE 2 // set distance (m) from dock to ignore gps while undocking
+#define UNDOCK_IGNORE_GPS_DISTANCE 1 // set distance (m) from dock to ignore gps while undocking
 
 // ---- path tracking -----------------------------------
 
@@ -403,9 +403,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // ----- other options --------------------------------------------
 
 // button control (turns on additional features via the POWER-ON button)
-//#define BUTTON_CONTROL true      // additional features activated (press-and-hold button for specific beep count: 
+#define BUTTON_CONTROL true      // additional features activated (press-and-hold button for specific beep count: 
                                  //  1 beep=stop, 6 beeps=start, 5 beeps=dock, 3 beeps=R/C mode ON/OFF, 9 beeps=shutdown, 12 beeps=WiFi WPS
-#define BUTTON_CONTROL false   // additional features deactivated
+//#define BUTTON_CONTROL false   // additional features deactivated
 
 //#define USE_TEMP_SENSOR true  // only activate if temp sensor (htu21d) connected
 #define USE_TEMP_SENSOR false  
