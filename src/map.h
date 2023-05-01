@@ -153,7 +153,8 @@ class Map
     bool shouldDock;  // start docking?
     bool shouldRetryDock; // retry docking?
     bool shouldMow;  // start mowing?       
-    
+    //bber
+    int mapID; //id of the current map
     long mapCRC;  // map data CRC
         
     void begin();    

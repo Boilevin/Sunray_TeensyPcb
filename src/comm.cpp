@@ -6,6 +6,7 @@
 #include "Stats.h"
 #include "src/op/op.h"
 #include "reset.h"
+#include "storage.h"
 
 #ifdef __linux__
   #include <BridgeClient.h>
@@ -72,8 +73,8 @@ void cmdTuneParam(){
   int lastCommaIdx = 0;
   for (unsigned int idx=0; idx < cmd.length(); idx++){
     char ch = cmd[idx];
-    //Serial.print("ch=");
-    //Serial.println(ch);
+    //CONSOLE.print("ch=");
+    //CONSOLE.println(ch);
     if ((ch == ',') || (idx == cmd.length()-1)){
       float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();
       if (counter == 1){                            
@@ -96,7 +97,16 @@ void cmdTuneParam(){
             case 3: 
               stanleyTrackingSlowK = floatValue;
               break;
-          } 
+            case 4:
+              motor.ticksPerRevolution = int(floatValue);
+              break;
+            case 5:
+              motor.wheelBaseCm = int(floatValue);
+              break;
+            case 6:
+              motor.wheelDiameter = int(floatValue);
+              break;
+           } 
       } 
       counter++;
       lastCommaIdx = idx;
@@ -108,7 +118,9 @@ void cmdTuneParam(){
 
 // request operation
 void cmdControl(){
-  if (cmd.length()<6) return;  
+  if (cmd.length()<6) return; 
+  CONSOLE.print("cmd=");
+  CONSOLE.println(cmd);
   int counter = 0;
   int lastCommaIdx = 0;
   //int mow=-1;          
@@ -201,9 +213,21 @@ void cmdMotor(){
 }
 
 void cmdMotorTest(){
-  String s = F("E");
+  String s = F("E1");
   cmdAnswer(s);
   motor.test();  
+}
+
+void cmdMotorRollTest(){
+  String s = F("E2");
+  cmdAnswer(s);
+  motor.rollTest();  
+}
+
+void cmdMotorDistanceTest(){
+  String s = F("E3");
+  cmdAnswer(s);
+  motor.distanceTest();  
 }
 
 void cmdMotorPlot(){
@@ -481,6 +505,30 @@ void cmdSwitchOffRobot(){
   setOperation(OP_IDLE);
   battery.switchOff();
 }
+/*
+//bber
+void cmdSaveMap(String cmd)
+{
+   if (cmd.length()<6) return;
+   int lastCommaIdx = 4;
+   for (int idx = 5; idx < cmd.length(); idx++) 
+   {
+      char ch = cmd[idx];
+      if ((ch == ',') || (idx == cmd.length() - 1)) 
+      {
+         maps.mapID = cmd.substring(lastCommaIdx + 1, idx + 1).toInt();
+         CONSOLE.print("MapID=");
+         CONSOLE.println(maps.mapID);
+         writeMapFlag = true;
+         WriteMap("");
+         break;
+      }
+   }
+   String s = F("U");
+   cmdAnswer(s);
+}
+
+*/
 
 // kidnap test (kidnap detection should trigger)
 void cmdKidnap(){
@@ -489,6 +537,12 @@ void cmdKidnap(){
   CONSOLE.println("kidnapping robot - kidnap detection should trigger");
   stateX = 0;  
   stateY = 0;
+}
+
+void cmdSaveMap(){
+  String s = F("U");
+  cmdAnswer(s);  
+  saveMap(maps.mapID);
 }
 
 // toggle GPS solution (invalid,float,fix) for testing
@@ -897,7 +951,11 @@ void processCmd(bool checkCrc, bool decrypt){
   if (cmd[3] == 'P') cmdPosMode();  
   if (cmd[3] == 'T') cmdStats();
   if (cmd[3] == 'L') cmdClearStats();
-  if (cmd[3] == 'E') cmdMotorTest();  
+  if (cmd[3] == 'E') {
+    if (cmd[4] == '1') cmdMotorTest();  
+    if (cmd[4] == '2') cmdMotorRollTest();    
+    if (cmd[4] == '3') cmdMotorDistanceTest();    
+   }
   if (cmd[3] == 'Q') cmdMotorPlot();  
   if (cmd[3] == 'O'){
     if (cmd.length() <= 4){
@@ -913,8 +971,12 @@ void processCmd(bool checkCrc, bool decrypt){
     if (cmd[4] == '2') cmdWiFiSetup();   
     if (cmd[4] == '3') cmdWiFiStatus();     
   }
-  if (cmd[3] == 'U'){ 
-    if ((cmd.length() > 4) && (cmd[4] == '1')) cmdFirmwareUpdate();
+  if (cmd[3] == 'U'){
+     if (cmd.length() <= 4){
+       cmdSaveMap(); 
+    } else {
+      if (cmd[4] == '1') cmdFirmwareUpdate();
+    }  
   }
   if (cmd[3] == 'G') cmdToggleGPSSolution();   // for developers
   if (cmd[3] == 'K') cmdKidnap();   // for developers
@@ -1273,10 +1335,10 @@ void processComm(){
 
 // output summary on console
 void outputConsole(){
-  //return;
+  return;
   if (millis() > nextInfoTime){        
     bool started = (nextInfoTime == 0);
-    nextInfoTime = millis() + 60000;                   
+    nextInfoTime = millis() + 3000;                   
     unsigned long totalsecs = millis()/1000;
     unsigned long totalmins = totalsecs/60;
     unsigned long hour = totalmins/60;

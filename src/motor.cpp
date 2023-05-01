@@ -59,7 +59,8 @@ void Motor::begin() {
   recoverMotorFault = false;
   recoverMotorFaultCounter = 0;
   nextRecoverMotorFaultTime = 0;
-  enableMowMotor = true;
+  //enableMowMotor = true;
+  enableMowMotor = ENABLE_MOW_MOTOR; //Default: true
   tractionMotorsEnabled = true;
   
   motorLeftOverload = false;
@@ -587,6 +588,9 @@ void Motor::dumpOdoTicks(int seconds){
   int ticksRight=0;
   int ticksMow=0;
   motorDriver.getMotorEncoderTicks(ticksLeft, ticksRight, ticksMow);  
+  if (motorLeftPWMCurr < 0) ticksLeft *= -1;
+  if (motorRightPWMCurr < 0) ticksRight *= -1;
+  if (motorMowPWMCurr < 0) ticksMow *= -1;
   motorLeftTicks += ticksLeft;
   motorRightTicks += ticksRight;
   motorMowTicks += ticksMow;
@@ -612,6 +616,7 @@ void Motor::test(){
   int seconds = 0;
   int pwmLeft = 200;
   int pwmRight = 200; 
+
   bool slowdown = true;
   unsigned long stopTicks = ticksPerRevolution * 10;
   unsigned long nextControlTime = 0;
@@ -623,7 +628,11 @@ void Motor::test(){
         slowdown = false;
       }    
       if (millis() > nextInfoTime){      
-        nextInfoTime = millis() + 1000;            
+        nextInfoTime = millis() + 1000;  
+        if (seconds > 50)
+      {
+        break;
+      }          
         dumpOdoTicks(seconds);
         seconds++;      
       }    
@@ -644,8 +653,117 @@ void Motor::test(){
     }
   }  
   speedPWM(0, 0, 0);
-  CONSOLE.println("motor test done - please ignore any IMU/GPS errors");
+  CONSOLE.println("motor 10 rev done - please ignore any IMU/GPS errors");
+  CONSOLE.println("ADJUST TICKS_PER_REVOLUTION into config.h is not OK");
 }
+
+
+void Motor::distanceTest(){
+  CONSOLE.println("3 meters motor test");
+  motorLeftTicks = 0;  
+  motorRightTicks = 0;  
+  unsigned long nextInfoTime = 0;
+  int seconds = 0;
+  int pwmLeft = 150;
+  int pwmRight = 150; 
+  bool slowdown = true;
+  unsigned long stopTicks = ticksPerCm * 300;
+  unsigned long nextControlTime = 0;
+  while (motorLeftTicks < stopTicks || motorRightTicks < stopTicks){
+    if (millis() > nextControlTime){
+      nextControlTime = millis() + 20;
+      if ((slowdown) && ((motorLeftTicks + ticksPerRevolution  > stopTicks)||(motorRightTicks + ticksPerRevolution > stopTicks))){  //Letzte halbe drehung verlangsamen
+        pwmLeft = pwmRight = 80;
+        slowdown = false;
+      }    
+      if (millis() > nextInfoTime){      
+        nextInfoTime = millis() + 1000; 
+        if (seconds > 50)
+      {
+        break;
+      }           
+        dumpOdoTicks(seconds);
+        seconds++;      
+      }    
+      if(motorLeftTicks >= stopTicks)
+      {
+        pwmLeft = 0;
+      }  
+      if(motorRightTicks >= stopTicks)
+      {
+        pwmRight = 0;      
+      }
+      
+      speedPWM(pwmLeft, pwmRight, 0);
+      sense();
+      //delay(50);         
+      watchdogReset(); 
+      robotDriver.run();
+    }
+  }  
+  speedPWM(0, 0, 0);
+  CONSOLE.println(" 3 meters done - please ignore any IMU/GPS errors");
+  CONSOLE.println("ADJUST WHEEL_DIAMETER into config.h is not OK");
+}
+
+
+void Motor::rollTest(){
+  CONSOLE.println("motor roll test - 360 deg rotation");
+  motorLeftTicks = 0;  
+  motorRightTicks = 0;  
+  unsigned long nextInfoTime = 0;
+  int seconds = 0;
+  int pwmLeft = 150;
+  int pwmRight = -150; 
+  motorLeftPWMCurr =100;
+  motorRightPWMCurr =-100; // need a negative number to correctly compute the odometry on reverse run
+
+  bool slowdown = true;
+  
+  //bber100
+  long stopTicksLeft =  (int)36000 * (ticksPerCm * PI * wheelBaseCm / 36000);           
+  long stopTicksRight = -(int)36000 * (ticksPerCm * PI * wheelBaseCm / 36000);
+
+  CONSOLE.println(stopTicksLeft);
+  CONSOLE.println(stopTicksRight);
+
+  unsigned long nextControlTime = 0;
+  while (motorLeftTicks < stopTicksLeft || motorRightTicks > stopTicksRight){
+    if (millis() > nextControlTime){
+      if (seconds > 50)
+      {
+        break;
+      }
+      nextControlTime = millis() + 20;
+      if ((slowdown) && ((motorLeftTicks + ticksPerRevolution  > stopTicksLeft)||(motorRightTicks + ticksPerRevolution > stopTicksRight))){  //Letzte halbe drehung verlangsamen
+        pwmLeft = 80;
+        pwmRight = -80;
+        slowdown = false;
+      }    
+      if (millis() > nextInfoTime){      
+        nextInfoTime = millis() + 1000;  
+        dumpOdoTicks(seconds);
+        seconds++;      
+      }    
+      if(motorLeftTicks >= stopTicksLeft)
+      {
+        pwmLeft = 0;
+      }  
+      if(motorRightTicks <= stopTicksRight)
+      {
+        pwmRight = 0;      
+      }
+      speedPWM(pwmLeft, pwmRight, 0);
+      sense();
+      //delay(50);         
+      watchdogReset(); 
+      robotDriver.run();
+    }
+  }  
+  speedPWM(0, 0, 0);
+  CONSOLE.println("Roll 360 Degree done - please ignore any IMU/GPS errors");
+  CONSOLE.println("ADJUST WHEEL_BASE_CM into config.h is not OK");
+  }
 
 
 void Motor::plot(){

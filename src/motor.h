@@ -39,9 +39,9 @@ class Motor {
     float mowMotorCurrentAverage;
     float currentFactor;
     bool pwmSpeedCurveDetection;
-    unsigned long motorLeftTicks;
-    unsigned long motorRightTicks;
-    unsigned long motorMowTicks;    
+    long motorLeftTicks;
+    long motorRightTicks;
+    long motorMowTicks;    
     float linearSpeedSet; // m/s
     float angularSpeedSet; // rad/s
     float motorLeftSense; // left motor current (amps)
@@ -70,6 +70,9 @@ class Motor {
     void begin();
     void run();      
     void test();
+    //bber
+    void rollTest();
+    void distanceTest();
     void plot();
     void enableTractionMotors(bool enable);
     void setLinearAngularSpeed(float linear, float angular, bool useLinearRamp = true);

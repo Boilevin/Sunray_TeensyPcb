@@ -41,7 +41,7 @@ void Battery::begin()
   
   batMonitor = true;              // monitor battery and charge voltage?      
   batGoHomeIfBelow = GO_HOME_VOLTAGE; // 21.5  drive home voltage (Volt)  
-  batSwitchOffIfBelow = 18.9;  // switch off battery if below voltage (Volt)  
+  batSwitchOffIfBelow = 20;  // switch off battery if below voltage (Volt)  
   batSwitchOffIfIdle = 300;      // switch off battery if idle (seconds)
   // The battery will charge if both battery voltage is below that value and charging current is above that value.
   batFullCurrent  = BAT_FULL_CURRENT;  // 0.2  current flowing when battery is fully charged (A)
@@ -90,6 +90,9 @@ bool Battery::shouldGoHome(){
 
 bool Battery::underVoltage(){
   if (startupPhase < 2) return false;
+  if (!BAT_SWITCH_OFF_UNDERVOLTAGE){
+    return false;
+  }
   return (batteryVoltage < batSwitchOffIfBelow);
 }
 

@@ -14,6 +14,7 @@
 
 bool loadState();
 bool saveState();
+bool saveMap(int mapId);
 
 
 #endif

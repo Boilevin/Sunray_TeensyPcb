@@ -38,7 +38,8 @@ int get_turn_direction_preference() {
   float targetDelta = pointsAngle(stateX, stateY, target.x(), target.y());
   float center_x = stateX;
   float center_y = stateY;
-  float r = 0.3;
+  //float r = 0.3;
+  float r = (MOWER_SIZE / 100);
 
   // create circle / octagon around center angle 0 - "360"
   circle.points[0].setXY(center_x + cos(deg2rad(0)) * r, center_y + sin(deg2rad(0)) * r);
@@ -242,7 +243,7 @@ void trackLine(bool runControl){
       printmotoroverload = false;
     }   
           
-    //angula                                    r = 3.0 * trackerDiffDelta + 3.0 * lateralError;       // correct for path errors 
+    //angular = 3.0 * trackerDiffDelta + 3.0 * lateralError;       // correct for path errors 
     float k = stanleyTrackingNormalK; // STANLEY_CONTROL_K_NORMAL;
     float p = stanleyTrackingNormalP; // STANLEY_CONTROL_P_NORMAL;    
     if (maps.trackSlow && trackslow_allowed) {
@@ -336,8 +337,10 @@ void trackLine(bool runControl){
     }
 
     motor.setLinearAngularSpeed(linear, angular);      
-    if (detectLift()) mow = false; // in any case, turn off mower motor if lifted 
-    motor.setMowState(mow);    
+    if (detectLift()) {
+      mow = false; // in any case, turn off mower motor if lifted 
+      motor.setMowState(mow);    
+    }
   }
 
   if (targetReached){

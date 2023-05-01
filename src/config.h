@@ -116,8 +116,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // NOTE: if using non-default Ardumower chassis and your freewheel is at frontside (gear motors at backside), have may have to swap motor cables, 
 // more info here: https://wiki.ardumower.de/index.php?title=Ardumower_Chassis_%27mountain_mod%27)
 #define FREEWHEEL_IS_AT_BACKSIDE   false   // default Ardumower: true   (change to false, if your freewheel is at frontside) - this is used for obstacle avoidance
-#define WHEEL_BASE_CM         36         // wheel-to-wheel distance (cm)        
-#define WHEEL_DIAMETER        250        // wheel diameter (mm)                 
+#define WHEEL_BASE_CM         42         // wheel-to-wheel distance (cm)        
+#define WHEEL_DIAMETER        245        // wheel diameter (mm)                 
+#define MOWER_SIZE            60        // mower / chassis size / length in cm
 
 //#define ENABLE_ODOMETRY_ERROR_DETECTION  true    // use this to detect odometry erros
 #define ENABLE_ODOMETRY_ERROR_DETECTION  false
@@ -177,7 +178,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // certain time (normally a few seconds) and the mower will try again and set a virtual obstacle after too many tries
 // On the other hand, the overload detection will detect situations the fault signal cannot detect: slightly higher current for a longer time 
 
-#define MAX_MOW_PWM 150  // use this to permanently reduce mowing motor power (255=max)
+#define MAX_MOW_PWM 200  // use this to permanently reduce mowing motor power (255=max)
 
 #define MOW_FAULT_CURRENT 8.0       // mowing motor fault current (amps)
 #define MOW_OVERLOAD_CURRENT 4.0    // mowing motor overload current (amps)
@@ -189,6 +190,10 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // should the error on motor overload detection be enabled?
 //#define ENABLE_OVERLOAD_DETECTION  true    // robot will stop on overload
 #define ENABLE_OVERLOAD_DETECTION  false    // robot will slow down on overload
+
+// shall the mow motor be activated for normal operation? Deactivate this option for GPS tests and path tracking running tests
+#define ENABLE_MOW_MOTOR true // Default is true, set false for testing purpose to switch off mow motor permanently
+
 
 // should the motor fault (error) detection be enabled? 
 //#define ENABLE_FAULT_DETECTION  true
@@ -360,6 +365,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define OBSTACLE_AVOIDANCE true   // try to find a way around obstacle
 //#define OBSTACLE_AVOIDANCE false  // stop robot on obstacle
 #define OBSTACLE_DIAMETER 1.2   // choose diameter of obstacles placed in front of robot (m) for obstacle avoidance
+
+#define DISABLE_MOW_MOTOR_AT_OBSTACLE false // switch off mow motor while escape at detected obstacle; set false if mow motor shall not be stopped at detected obstacles
 
 // detect robot being kidnapped? robot will try GPS recovery if distance to tracked path is greater than a certain value
 // (false GPS fix recovery), and if that fails go into error 

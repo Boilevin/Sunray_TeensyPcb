@@ -473,7 +473,9 @@ void Map::begin(){
   shouldDock = false; 
   shouldRetryDock = false; 
   shouldMow = false;         
-  mapCRC = 0;  
+  mapCRC = 0; 
+  //bber
+  //mapID=3; 
   CONSOLE.print("sizeof Point=");
   CONSOLE.println(sizeof(Point));  
   load();
@@ -1004,7 +1006,8 @@ bool Map::startMowing(float stateX, float stateY){
 
 
 void Map::clearObstacles(){  
-  CONSOLE.println("clearObstacles");
+  //bber300
+ //CONSOLE.println("clearObstacles");
   obstacles.dealloc();  
 }
 

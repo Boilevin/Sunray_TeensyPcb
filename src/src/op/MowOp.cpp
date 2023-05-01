@@ -27,8 +27,9 @@ void MowOp::begin(){
 
     CONSOLE.println("OP_MOW");      
     motor.enableTractionMotors(true); // allow traction motors to operate         
-    motor.setLinearAngularSpeed(0,0);      
-    motor.setMowState(false);                
+    motor.setLinearAngularSpeed(0,0); 
+    //bber200
+    if (((previousOp != &escapeReverseOp) && (previousOp != &escapeForwardOp)) || (DISABLE_MOW_MOTOR_AT_OBSTACLE))  motor.setMowState(false);           
 
     // plan route to next target point 
 

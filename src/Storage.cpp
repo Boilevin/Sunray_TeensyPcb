@@ -25,6 +25,8 @@ double calcStateCRC(){
 
 
 void dumpState(){
+  //bber300
+  return;
   CONSOLE.print("dumpState: ");
   CONSOLE.print(" X=");
   CONSOLE.print(stateX);
@@ -157,6 +159,60 @@ bool loadState(){
 #endif
   return true;
 }
+
+
+
+bool saveMap(int mapId){   
+  bool res = true;
+
+  double crc = calcStateCRC();
+  //CONSOLE.print("stateCRC=");
+  //CONSOLE.print(stateCRC);
+  //CONSOLE.print(" crc=");
+  //CONSOLE.println(crc);
+  if (crc == stateCRC) return true;
+  stateCRC = crc;
+  dumpState();
+  CONSOLE.print("save state... ");
+  //stateFile = SD.open("state.bin",  FILE_CREATE); // O_WRITE | O_CREAT);
+  stateFile = SD.open("state"" + mapId + "".bin",  FILE_CREATE); // O_WRITE | O_CREAT);
+
+  if (!stateFile){        
+    CONSOLE.println("ERROR opening file for writing");
+    return false;
+  }
+  uint32_t marker = 0x10001003;
+  res &= (stateFile.write((uint8_t*)&marker, sizeof(marker)) != 0); 
+  res &= (stateFile.write((uint8_t*)&maps.mapCRC, sizeof(maps.mapCRC)) != 0); 
+
+  res &= (stateFile.write((uint8_t*)&stateX, sizeof(stateX)) != 0);
+  res &= (stateFile.write((uint8_t*)&stateY, sizeof(stateY)) != 0);
+  res &= (stateFile.write((uint8_t*)&stateDelta, sizeof(stateDelta)) != 0);
+  res &= (stateFile.write((uint8_t*)&maps.mowPointsIdx, sizeof(maps.mowPointsIdx)) != 0);
+  res &= (stateFile.write((uint8_t*)&maps.dockPointsIdx, sizeof(maps.dockPointsIdx)) != 0);
+  res &= (stateFile.write((uint8_t*)&maps.freePointsIdx, sizeof(maps.freePointsIdx)) != 0);
+  res &= (stateFile.write((uint8_t*)&maps.wayMode, sizeof(maps.wayMode)) != 0);
+  res &= (stateFile.write((uint8_t*)&stateOp, sizeof(stateOp)) != 0);
+  res &= (stateFile.write((uint8_t*)&stateSensor, sizeof(stateSensor)) != 0);
+  res &= (stateFile.write((uint8_t*)&sonar.enabled, sizeof(sonar.enabled)) != 0);
+  res &= (stateFile.write((uint8_t*)&fixTimeout, sizeof(fixTimeout)) != 0);
+  res &= (stateFile.write((uint8_t*)&setSpeed, sizeof(setSpeed)) != 0);
+  res &= (stateFile.write((uint8_t*)&absolutePosSource, sizeof(absolutePosSource)) != 0);
+  res &= (stateFile.write((uint8_t*)&absolutePosSourceLon, sizeof(absolutePosSourceLon)) != 0);
+  res &= (stateFile.write((uint8_t*)&absolutePosSourceLat, sizeof(absolutePosSourceLat)) != 0);
+  if (res){
+    CONSOLE.println("ok");
+  } else {
+    CONSOLE.println("ERROR saving state");
+  }
+  stateFile.flush();
+  stateFile.close();
+
+  return res; 
+}
+
+
+
 
 
 bool saveState(){   

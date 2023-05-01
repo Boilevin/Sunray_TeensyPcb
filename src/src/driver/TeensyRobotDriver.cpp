@@ -706,7 +706,7 @@ void AmMotorDriver::resetMotorFaults(){
 }
 
 void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){
-  
+      if (!powerboard_I2c_line_Ok) return;
       //bber
       rightCurrent = MotLeftIna226.readShuntCurrent() ;
       leftCurrent = MotRightIna226.readShuntCurrent() ;
@@ -810,6 +810,7 @@ void AmBatteryDriver::run(){
 
     
 float AmBatteryDriver::getBatteryVoltage(){
+  if (!powerboard_I2c_line_Ok) return;
   float voltage;
   float D5VoltageDrop=0.8; // drop voltage on diode
   float batvolt = MotRightIna226.readBusVoltage() ;
@@ -820,6 +821,7 @@ float AmBatteryDriver::getBatteryVoltage(){
 }
 
 float AmBatteryDriver::getChargeVoltage(){
+  if (!powerboard_I2c_line_Ok) return;
   float voltage;
   float chgvolt = ChargeIna226.readBusVoltage() ;
   double accel = 0.05;  //filter percent
@@ -829,6 +831,7 @@ float AmBatteryDriver::getChargeVoltage(){
 
 
 float AmBatteryDriver::getChargeCurrent(){ 
+    if (!powerboard_I2c_line_Ok) return;
     float amps;
     float curramp = ChargeIna226.readBusPower(); //  ?? sense don't work so read power and divise by voltage
     if (getChargeVoltage() != 0) {
