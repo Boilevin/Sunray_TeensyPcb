@@ -17,6 +17,7 @@
   #elif __IMXRT1062__  //teensy 4
        #include "TeensyRobotDriver.h"
        #include "../mpu/INA226.h"  // for sense on robomow
+       
   #endif
 
 #include "../../config.h"
@@ -124,7 +125,14 @@ bool AmRobotDriver::getMcuFirmwareVersion(String &name, String &ver){
 }
 
 float AmRobotDriver::getCpuTemperature(){
+
+
+
   return GetCPUTemperature();  
+
+
+
+
 }
 
 

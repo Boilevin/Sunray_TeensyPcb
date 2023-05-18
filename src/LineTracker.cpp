@@ -22,6 +22,7 @@ float stanleyTrackingSlowK = STANLEY_CONTROL_K_SLOW;
 float stanleyTrackingSlowP = STANLEY_CONTROL_P_SLOW;    
 
 float setSpeed = 0.1; // linear speed (m/s)
+float setDockingSpeed = 0.1; // linear speed (m/s)
 Point last_rotation_target;
 bool rotateLeft = false;
 bool rotateRight = false;
@@ -39,7 +40,14 @@ int get_turn_direction_preference() {
   float center_x = stateX;
   float center_y = stateY;
   //float r = 0.3;
+  
   float r = (MOWER_SIZE / 100);
+  float cur_angle = stateDelta;
+
+  if (FREEWHEEL_IS_AT_BACKSIDE) {
+	  cur_angle = scalePI(stateDelta + PI);
+	  targetDelta = scalePI(targetDelta + PI);
+  }
 
   // create circle / octagon around center angle 0 - "360"
   circle.points[0].setXY(center_x + cos(deg2rad(0)) * r, center_y + sin(deg2rad(0)) * r);
@@ -56,7 +64,7 @@ int get_turn_direction_preference() {
   // CONSOLE.print(stateX);
   // CONSOLE.print("/");
   // CONSOLE.print(stateY);
-  // CONSOLE.print(" stateDelta: ");
+  // CONSOLE.print(cur_angle);
   // CONSOLE.print(stateDelta);
   // CONSOLE.print(" targetDelta: ");
   // CONSOLE.println(targetDelta);
@@ -74,20 +82,24 @@ int get_turn_direction_preference() {
     if (maps.checkpoint(circle.points[i].x(), circle.points[i].y())) {
 
             // skip points in front of us
-            if (fabs(angle-stateDelta) < 0.05) {
+            if (fabs(angle-cur_angle) < 0.05) {
                     continue;
             }
 
-            if (stateDelta < targetDelta) {
-                if (angle >= stateDelta && angle <= targetDelta) {
+            if (cur_angle < targetDelta) {
+                if (angle >= cur_angle && angle <= targetDelta) { 
+             
                     left++;
                 } else {
                     right++;
                 }
             } else {
-                   if (angle <= stateDelta && angle >= targetDelta) {
+                if (angle <= cur_angle && angle >= targetDelta)
+                {
                     right++;
-                } else {
+                }
+                else
+                {
                     left++;
                 }
             }
@@ -156,7 +168,7 @@ void trackLine(bool runControl){
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
-    angular = 2 * 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
+    angular = 1.5 * 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
       // no idea but don't work in reverse mode...
@@ -189,7 +201,7 @@ void trackLine(bool runControl){
       rotateLeft = false;
       rotateRight = false;
       // reverse rotation (*-1) - slowly rotate back
-      angular = 2 * 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
+      angular = 1.5 * 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
     }
     if (rotateRight) angular *= -1;
   } 
@@ -215,16 +227,36 @@ void trackLine(bool runControl){
     }
 
     if (maps.trackSlow && trackslow_allowed) {
+         
       // planner forces slow tracking (e.g. docking etc)
       //bber
-        linear = setSpeed / 2;
-    } else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
+        if (maps.isUndocking() || maps.isDocking())
+        {
+            if (linear != setDockingSpeed)  //only send data to console on change speed
+            {
+                    linear = setDockingSpeed;
+                    CONSOLE.print("Reduce speed on tracking or docking : ");
+                    CONSOLE.println(linear);
+            }
+        }
+                 
+    }
+     else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
           || ((linearMotionStartTime != 0) && (millis() < linearMotionStartTime + 3000))                      // leaving  
        ) 
     {
-      linear = setSpeed / 2; // reduce speed when approaching/leaving waypoints          
+
+        if (linear != setSpeed / 2)
+        { // only send data to console on change speed
+            {
+                    linear = setSpeed / 2; // reduce speed when approaching/leaving waypoints
+                    //CONSOLE.print("Reduce speed near waypoint : ");
+                    //CONSOLE.println(linear);
+            }
+        }
     } 
-    else {
+    else 
+    {
       if (gps.solution == SOL_FLOAT) 
       //bber       
         linear = min(setSpeed, setSpeed / 2); // reduce speed for float solution

@@ -978,19 +978,15 @@ void run(){
   // temp
   if (millis() > nextTempTime){
     nextTempTime = millis() + 60000;    
-    float batTemp = batteryDriver.getBatteryTemperature();
+    //float batTemp = batteryDriver.getBatteryTemperature();
     float cpuTemp = robotDriver.getCpuTemperature();    
-    CONSOLE.print("batTemp=");
-    CONSOLE.print(batTemp,0);
     CONSOLE.print("  cpuTemp=");
     CONSOLE.print(cpuTemp,0);    
     //logCPUHealth();
     CONSOLE.println();    
-    if (batTemp < -999){
-      stateTemp = cpuTemp;
-    } else {
-      stateTemp = batTemp;    
-    }
+    
+    stateTemp = cpuTemp;
+   
     statTempMin = min(statTempMin, stateTemp);
     statTempMax = max(statTempMax, stateTemp);    
   }
@@ -1032,9 +1028,9 @@ void run(){
 
   if (millis() >= nextControlTime)
   {
-    if (millis()-nextControlTime > 18)
+    if (millis()-nextControlTime > 20)
     {
-      CONSOLE.print("Exceed Control time duration better if < 18 ms : ");
+      CONSOLE.print("Exceed Control time duration better if < 20 ms : ");
       CONSOLE.println(millis()-nextControlTime);
     }
 

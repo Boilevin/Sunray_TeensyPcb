@@ -12,7 +12,7 @@
 
 void Motor::begin() {
 	pwmMax = 255;
- 
+  CONSOLE.println("Motor Begin");
   #ifdef MAX_MOW_PWM
     if (MAX_MOW_PWM <= 255) {
       pwmMaxMow = MAX_MOW_PWM;
