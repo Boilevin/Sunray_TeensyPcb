@@ -8,7 +8,7 @@
 #include "helper.h"
 #include "robot.h"
 #include "Arduino.h"
-
+unsigned long timeToShowInfo;
 
 void Motor::begin() {
 	pwmMax = 255;
@@ -83,7 +83,7 @@ void Motor::begin() {
   motorMow1SenseLP = 0; 
   motorMow2SenseLP = 0; 
   motorMow3SenseLP = 0; 
-
+  motorMowSenseLP = 0;
   motorsSenseLP = 0;
 
   activateLinearSpeedRamp = USE_LINEAR_SPEED_RAMP;
@@ -352,10 +352,9 @@ bool Motor::checkCurrentTooLowError(){
   //CONSOLE.print(motorRightPWMCurr);
   //CONSOLE.print(",");
   //CONSOLE.println(motorRightSenseLP);
-  if  (    ( (abs(motorMowPWMCurr) > 100) && (abs(motorMowPWMCurrLP) > 100) && (motorMowSenseLP < 0.005)) 
-        ||  ( (abs(motorLeftPWMCurr) > 100) && (abs(motorLeftPWMCurrLP) > 100) && (motorLeftSenseLP < 0.005))    
-        ||  ( (abs(motorRightPWMCurr) > 100) && (abs(motorRightPWMCurrLP) > 100) && (motorRightSenseLP < 0.005))  ){        
-    // at least one motor is not consuming current      
+  if  (    ( (abs(motorMowPWMCurr) > 100) && (abs(motorMowPWMCurrLP) > 100) && (motorMowSenseLP < MOW_TOO_LOW_CURRENT)) 
+        ||  ( (abs(motorLeftPWMCurr) > 100) && (abs(motorLeftPWMCurrLP) > 100) && (motorLeftSenseLP < MOTOR_TOO_LOW_CURRENT))    
+        ||  ( (abs(motorRightPWMCurr) > 100) && (abs(motorRightPWMCurrLP) > 100) && (motorRightSenseLP < MOTOR_TOO_LOW_CURRENT))  ){    // at least one motor is not consuming current      
     // first try reovery, then indicate a motor error to the robot control (so it can try an obstacle avoidance)    
     CONSOLE.print("ERROR: motor current too low: pwm (left,right,mow)=");
     CONSOLE.print(motorLeftPWMCurr);
@@ -540,18 +539,18 @@ void Motor::control(){
   if ((abs(motorRightRpmSet) < 0.01) && (motorRightPWMCurr < 30)) motorRightPWMCurr = 0;
 
   //########################  Print Motor Parameter to LOG ############################
-  
-//  CONSOLE.print("rpm set=");
-//  CONSOLE.print(tempMotorLeftRpmSet);
-//  CONSOLE.print(",");
-//  CONSOLE.print(tempMotorRightRpmSet);
-//  CONSOLE.print("   curr=");
-//  CONSOLE.print(motorLeftRpmCurr);
-//  CONSOLE.print(",");
-//  CONSOLE.print(motorRightRpmCurr);
-//  CONSOLE.print(",");
-//  CONSOLE.print("   PwmOffset=");
-//  CONSOLE.println(tempPwmSpeedOffset);
+  if (timeToShowInfo > millis())
+  {
+    timeToShowInfo = millis() + 500;
+    CONSOLE.print("rpm L/R set= ");
+    CONSOLE.print(motorLeftRpmSet);
+    CONSOLE.print(",");
+    CONSOLE.print(motorRightRpmSet);
+    CONSOLE.print("   curr= ");
+    CONSOLE.print(motorLeftRpmCurr);
+    CONSOLE.print(",");
+    CONSOLE.println(motorRightRpmCurr);
+  }
 
   //########################  Calculate PWM for mowing motor ############################
   

@@ -156,7 +156,8 @@ class DockOp: public Op {
 
 // charging op
 class ChargeOp: public Op {
-  public:     
+  public:
+    unsigned long retryTouchDockSpeedTime;     
     unsigned long retryTouchDockStopTime;
     unsigned long betterTouchDockStopTime;
     bool retryTouchDock;

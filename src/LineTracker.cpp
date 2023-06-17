@@ -22,7 +22,7 @@ float stanleyTrackingSlowK = STANLEY_CONTROL_K_SLOW;
 float stanleyTrackingSlowP = STANLEY_CONTROL_P_SLOW;    
 
 float setSpeed = 0.1; // linear speed (m/s)
-float setDockingSpeed = 0.1; // linear speed (m/s)
+float setDockingSpeed = 0.2; // linear speed (m/s)
 Point last_rotation_target;
 bool rotateLeft = false;
 bool rotateRight = false;
@@ -127,7 +127,9 @@ int get_turn_direction_preference() {
 void trackLine(bool runControl){  
   Point target = maps.targetPoint;
   Point lastTarget = maps.lastTargetPoint;
-  float linear = 1.0;  
+  //bber
+  //float linear = 1.0;  
+  float linear = setSpeed;  
   bool mow = true;
   if (stateOp == OP_DOCK) mow = false;
   float angular = 0;      
@@ -231,14 +233,9 @@ void trackLine(bool runControl){
       // planner forces slow tracking (e.g. docking etc)
       //bber
         if (maps.isUndocking() || maps.isDocking())
-        {
-            if (linear != setDockingSpeed)  //only send data to console on change speed
-            {
-                    linear = setDockingSpeed;
-                    CONSOLE.print("Reduce speed on tracking or docking : ");
-                    CONSOLE.println(linear);
-            }
-        }
+          {    
+          linear = setDockingSpeed;
+          }
                  
     }
      else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching

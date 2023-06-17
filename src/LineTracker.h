@@ -15,6 +15,7 @@ extern float stanleyTrackingNormalK;
 extern float stanleyTrackingNormalP;
 extern float stanleyTrackingSlowK;
 extern float stanleyTrackingSlowP;
+extern float setDockingSpeed;
 
 
 void trackLine(bool runControl);  

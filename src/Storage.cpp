@@ -219,15 +219,21 @@ bool saveState(){
   bool res = true;
 #if defined(ENABLE_SD_RESUME)
   double crc = calcStateCRC();
-  //CONSOLE.print("stateCRC=");
-  //CONSOLE.print(stateCRC);
-  //CONSOLE.print(" crc=");
-  //CONSOLE.println(crc);
+  // CONSOLE.print("stateCRC=");
+  // CONSOLE.print(stateCRC);
+  // CONSOLE.print(" crc=");
+  // CONSOLE.println(crc);
   if (crc == stateCRC) return true;
   stateCRC = crc;
   dumpState();
   CONSOLE.print("save state... ");
+  
+#ifdef __SAMD51__    // GCM4
   stateFile = SD.open("state.bin",  FILE_CREATE); // O_WRITE | O_CREAT);
+#elif __IMXRT1062__  //teensy 
+  stateFile = SD.open("state.bin",FILE_WRITE); // O_WRITE | O_CREAT);
+#endif
+
   if (!stateFile){        
     CONSOLE.println("ERROR opening file for writing");
     return false;

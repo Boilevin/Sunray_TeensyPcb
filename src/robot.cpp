@@ -212,7 +212,31 @@ void updateGPSMotionCheckTime(){
 }
 
 
+void fanControl(bool rotate) {
+  if (rotate){
+    //CONSOLE.println("Start Fan");
+    digitalWrite (pinUserFan,HIGH);         
+  }
+  else{
+    //CONSOLE.println("Stop Fan");
+    digitalWrite (pinUserFan,LOW);    
+  }
+  
 
+
+}
+void hornControl(bool noise) {
+   if (noise){
+    CONSOLE.println("Start Horn");
+    digitalWrite (pinUserAlarm,HIGH); 
+   }
+   else{
+    CONSOLE.println("Stop Horn");
+    digitalWrite (pinUserAlarm,LOW); 
+   }
+
+
+}
 
 
 void sensorTest(){
@@ -559,7 +583,10 @@ void start(){
   //bber
   // for teensy set some serial buffer size to 1024
   
-  
+  pinMode(pinUserFan,OUTPUT);
+  digitalWrite(pinUserFan,LOW);
+  pinMode(pinUserAlarm,OUTPUT);
+  digitalWrite(pinUserAlarm,LOW);
 
   pinMan.begin();         
   // keep battery switched ON
@@ -980,10 +1007,10 @@ void run(){
     nextTempTime = millis() + 60000;    
     //float batTemp = batteryDriver.getBatteryTemperature();
     float cpuTemp = robotDriver.getCpuTemperature();    
-    CONSOLE.print("  cpuTemp=");
-    CONSOLE.print(cpuTemp,0);    
-    //logCPUHealth();
-    CONSOLE.println();    
+    // CONSOLE.print("  cpuTemp=");
+    // CONSOLE.print(cpuTemp,0);    
+    
+    // CONSOLE.println();    
     
     stateTemp = cpuTemp;
    

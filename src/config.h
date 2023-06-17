@@ -98,9 +98,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //  via 'File->Preferences->Full output during compile') - detailed steps here:  
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_module
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_logging
-#define ENABLE_SD      1                 // enable SD card services (resuming, logging)? (uncomment to activate)
+#define ENABLE_SD      true                 // enable SD card services (resuming, logging)? (uncomment to activate)
 //#define ENABLE_SD_LOG  1                 // enable SD card logging? uncomment to activate (not recommended - WARNING: may slow down system!)
-#define ENABLE_SD_RESUME  1              // enable SD card map load/resume on reset? (uncomment to activate)
+#define ENABLE_SD_RESUME  true             // enable SD card map load/resume on reset? (uncomment to activate)
 
 
 // ------ odometry -----------------------------------
@@ -159,6 +159,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 #define MOTOR_FAULT_CURRENT 6.0    // gear motors fault current (amps)
 #define MOTOR_OVERLOAD_CURRENT 2    // gear motors overload current (amps)
+#define MOTOR_TOO_LOW_CURRENT 0  // gear motor too low current (amps), set to zero (0) to disable
 
 #define USE_LINEAR_SPEED_RAMP  true      // use a speed ramp for the linear speed
 //#define USE_LINEAR_SPEED_RAMP  false      // do not use a speed ramp 
@@ -178,18 +179,18 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // certain time (normally a few seconds) and the mower will try again and set a virtual obstacle after too many tries
 // On the other hand, the overload detection will detect situations the fault signal cannot detect: slightly higher current for a longer time 
 
-#define MAX_MOW_PWM 200  // use this to permanently reduce mowing motor power (255=max)
+#define MAX_MOW_PWM 210  // use this to permanently reduce mowing motor power (255=max)
 
 #define MOW_FAULT_CURRENT 8.0       // mowing motor fault current (amps)
 #define MOW_OVERLOAD_CURRENT 4.0    // mowing motor overload current (amps)
-
+#define MOW_TOO_LOW_CURRENT 0   // mowing motor too low current (amps), set to zero (0) to disable
 // should the direction of mowing motor toggle each start? (yes: true, no: false)
 //#define MOW_TOGGLE_DIR       true // never use with robomow platform mow motor always rotate in the same dir
 #define MOW_TOGGLE_DIR       false
 
 // should the error on motor overload detection be enabled?
-//#define ENABLE_OVERLOAD_DETECTION  true    // robot will stop on overload
-#define ENABLE_OVERLOAD_DETECTION  false    // robot will slow down on overload
+#define ENABLE_OVERLOAD_DETECTION  true    // robot will stop on overload
+//#define ENABLE_OVERLOAD_DETECTION  false    // robot will slow down on overload
 
 // shall the mow motor be activated for normal operation? Deactivate this option for GPS tests and path tracking running tests
 #define ENABLE_MOW_MOTOR true // Default is true, set false for testing purpose to switch off mow motor permanently
@@ -303,12 +304,12 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 #define GO_HOME_VOLTAGE   22.5  // start going to dock below this voltage
 // The battery will charge if both battery voltage is below that value and charging current is above that value.
-#define BAT_FULL_VOLTAGE  28.7  // start mowing again at this voltage
-#define BAT_FULL_CURRENT  0.2   // start mowing again below this charging current (amps)
+#define BAT_FULL_VOLTAGE  29.3  // start mowing again at this voltage
+#define BAT_FULL_CURRENT  0.1   // start mowing again below this charging current (amps)
 
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#Automatic_battery_switch_off
-#define BAT_SWITCH_OFF_IDLE  false         // switch off if idle (JP8 must be set to autom.)
-#define BAT_SWITCH_OFF_UNDERVOLTAGE  false  // switch off if undervoltage (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_IDLE  true         // switch off if idle (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_UNDERVOLTAGE  true  // switch off if undervoltage (JP8 must be set to autom.)
 
 
 // ------ GPS ------------------------------------------
@@ -339,11 +340,11 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // configure ublox f9p with optimal settings (will be stored in f9p RAM only)
 // NOTE: due to a PCB1.3 bug GPS_RX pin is not working and you have to fix this by a wire:
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#PCB1.3_GPS_pin_fix_and_wire_fix   (see 'GPS wire fix')
-//#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
+#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+//#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
-//#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
+#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+//#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 //#define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 #define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
@@ -356,7 +357,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 #define ENABLE_PATH_FINDER  true     // path finder calculates routes around exclusions and obstacles 
 //#define ENABLE_PATH_FINDER  false
-#define ALLOW_ROUTE_OUTSIDE_PERI_METER 1.0   // max. distance (m) to allow routing from outside perimeter 
+#define ALLOW_ROUTE_OUTSIDE_PERI_METER 0.3   // max. distance (m) to allow routing from outside perimeter 
 // (increase if you get 'no map route' errors near perimeter)
 
 #define OBSTACLE_DETECTION_ROTATION true // detect robot rotation stuck (requires IMU)
@@ -364,7 +365,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 #define OBSTACLE_AVOIDANCE true   // try to find a way around obstacle
 //#define OBSTACLE_AVOIDANCE false  // stop robot on obstacle
-#define OBSTACLE_DIAMETER 1.2   // choose diameter of obstacles placed in front of robot (m) for obstacle avoidance
+#define OBSTACLE_DIAMETER 1.8   // choose diameter of obstacles placed in front of robot (m) for obstacle avoidance
 
 #define DISABLE_MOW_MOTOR_AT_OBSTACLE false // switch off mow motor while escape at detected obstacle; set false if mow motor shall not be stopped at detected obstacles
 
@@ -400,11 +401,11 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define TARGET_REACHED_TOLERANCE 0.05
 
 // stanley control for path tracking - determines gain how fast to correct for lateral path errors
-#define STANLEY_CONTROL_P_NORMAL  3.0   // 3.0 for path tracking control (angular gain) when mowing
-#define STANLEY_CONTROL_K_NORMAL  1.0   // 1.0 for path tracking control (lateral gain) when mowing
+#define STANLEY_CONTROL_P_NORMAL  1.1   // 3.0 for path tracking control (angular gain) when mowing
+#define STANLEY_CONTROL_K_NORMAL  0.3   // 1.0 for path tracking control (lateral gain) when mowing
 
-#define STANLEY_CONTROL_P_SLOW    3.0   // 3.0 for path tracking control (angular gain) when docking tracking
-#define STANLEY_CONTROL_K_SLOW    0.1   // 0.1 for path tracking control (lateral gain) when docking tracking
+#define STANLEY_CONTROL_P_SLOW    1.1   // 3.0 for path tracking control (angular gain) when docking tracking
+#define STANLEY_CONTROL_K_SLOW    0.3   // 0.1 for path tracking control (lateral gain) when docking tracking
 
 
 // ----- other options --------------------------------------------
@@ -575,8 +576,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
   //#define pinLawnFrontSend 41        // lawn sensor front sender 
   //#define pinLawnBackRecv 42         // lawn sensor back receive
   //#define pinLawnBackSend 43         // lawn sensor back sender 
-  #define pinUserSwitch1 13          // user-defined switch 1
-  #define pinUserSwitch2 32          // user-defined switch 2
+  #define pinUserFan 13          // user-defined switch 1
+  #define pinUserAlarm 32          // user-defined switch 2
   #define pinUserSwitch3 A16          // user-defined switch 3
   #define pinRain 39                 // rain sensor
   //#define pinReservedP14 A7          // reserved

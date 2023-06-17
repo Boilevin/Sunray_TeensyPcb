@@ -16,7 +16,7 @@ class Battery {
     float batGoHomeIfBelow;
     float batFullVoltage;
     float batSwitchOffIfBelow;  // switch off battery if below voltage (Volt)
-    int batSwitchOffIfIdle;      // switch off battery if idle (minutes)  
+    int batSwitchOffIfIdle;      // switch off battery if idle (second)  
     int enableChargingTimeout;
     float batFullCurrent;
 	  float batteryVoltage;   // volts
@@ -28,6 +28,7 @@ class Battery {
     bool chargingEnabled;
     int chargingCompletedDelay; // ensure that loadingcurrent or loadingvoltage triggers 'chargingCompleted' condition for a longer period
     bool chargingCompleted;
+    unsigned long startChargingIfBelow;
 	  void begin();            
     void run();	  
 	  bool chargerConnected();
@@ -38,7 +39,8 @@ class Battery {
     bool underVoltage();
     void resetIdle();
     void switchOff();
-  protected:       
+  protected:      
+    int batteryVoltageSlopeLowCounter; 
     int startupPhase;    
     unsigned long nextBatteryTime ;
     bool switchOffByOperator;    
@@ -47,6 +49,7 @@ class Battery {
     bool badChargerContactState;
     bool switchOffAllowedUndervoltage;
     bool switchOffAllowedIdle;
+    
     unsigned long switchOffTime;
     unsigned long chargingStartTime;
 	  unsigned long nextCheckTime;	  

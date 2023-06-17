@@ -46,7 +46,7 @@
 #include "PubSubClient.h"
 
 
-#define VER "Sunray,0.0.303"
+#define VER "Sunray,0.0.305"
 
 // operation types
 enum OperationType {
@@ -83,6 +83,8 @@ enum Sensor {
 #ifndef __linux__
   #define FILE_CREATE  (O_WRITE | O_CREAT)
 #endif
+
+
 
 extern OperationType stateOp; // operation
 extern Sensor stateSensor; // last triggered sensor
@@ -181,9 +183,13 @@ void triggerObstacle();
 void sensorTest();
 void updateStateOpText();
 void detectSensorMalfunction();
+void fanControl(bool rotate);
+void hornControl(bool noise);
+
 bool detectLift();
 bool detectObstacle();
 bool detectObstacleRotation();
+
 
 
 
