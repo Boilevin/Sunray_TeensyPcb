@@ -134,7 +134,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // #define TICKS_PER_REVOLUTION  696 / 2    // odometry ticks per wheel revolution 
 
 // ...for the older 42mm diameter motor (white connector)  https://wiki.ardumower.de/images/d/d6/Ardumower_chassis_inside_ready.jpg
-#define TICKS_PER_REVOLUTION  960    // odometry ticks per wheel revolution 
+#define TICKS_PER_REVOLUTION  1920    // odometry ticks per wheel revolution 
 
 // ...for the brushless motor april 2021   https://wiki.ardumower.de/index.php?title=Datei:BLUnit.JPG
 //#define TICKS_PER_REVOLUTION  1300 / 2    // 1194/2  odometry ticks per wheel revolution
@@ -308,8 +308,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define BAT_FULL_CURRENT  0.1   // start mowing again below this charging current (amps)
 
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#Automatic_battery_switch_off
-#define BAT_SWITCH_OFF_IDLE  true         // switch off if idle (JP8 must be set to autom.)
-#define BAT_SWITCH_OFF_UNDERVOLTAGE  true  // switch off if undervoltage (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_IDLE  false        // switch off if idle (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_UNDERVOLTAGE  false  // switch off if undervoltage (JP8 must be set to autom.)
 
 
 // ------ GPS ------------------------------------------
@@ -343,8 +343,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
 //#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
-#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-//#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
+//#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 //#define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 #define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)

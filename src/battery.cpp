@@ -196,18 +196,18 @@ void Battery::run()
       DEBUGLN(batSwitchOffIfBelow);
       buzzer.sound(SND_OVERCURRENT, true);
       if (switchOffAllowedUndervoltage)
-      //bber
-        DEBUGLN(F("Y3")); //need to send power off to pi
-        batteryDriver.keepPowerOn(false);
+        // bber
+        DEBUGLN(F("Y3")); // need to send power off to pi
+      batteryDriver.keepPowerOn(false);
     }
     else if ((millis() >= switchOffTime) || (switchOffByOperator))
     {
       DEBUGLN(F("SWITCHING OFF (idle timeout)"));
       buzzer.sound(SND_OVERCURRENT, true);
       if ((switchOffAllowedIdle) || (switchOffByOperator))
-        //bber
-        DEBUGLN(F("Y3")); //need to send power off to pi
-        batteryDriver.keepPowerOn(false);
+        // bber
+        DEBUGLN(F("Y3")); // need to send power off to pi
+      batteryDriver.keepPowerOn(false);
     }
     else
     {
@@ -243,7 +243,6 @@ void Battery::run()
         }
       }
 
-      
       if (abs(batteryVoltageSlope) < 0.002)
       {
         batteryVoltageSlopeLowCounter = min(10, batteryVoltageSlopeLowCounter + 1);
@@ -292,7 +291,7 @@ void Battery::run()
         //  https://github.com/Ardumower/Sunray/issues/32
         if (chargingCompletedDelay > 5)
         { // chargingCompleted check first after 6 * 5000ms = 30sec.
-          chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage) || (batteryVoltageSlopeLowCounter > 5)); 
+          chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage) || (batteryVoltageSlopeLowCounter > 5));
         }
         else
         {
@@ -304,8 +303,8 @@ void Battery::run()
           nextEnableTime = millis() + 1000 * enableChargingTimeout; // check charging current again in 30 minutes
           chargingCompleted = true;
           enableCharging(false);
-          // bber test on teensy PCB to stop mower at end of charging
-          batSwitchOffIfBelow = 50;
+          // bber  on teensy PCB stop mower at end of charging
+          // batSwitchOffIfBelow = 50;
         }
       }
       else

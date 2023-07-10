@@ -15,8 +15,8 @@ class PID
     PID(float Kp, float Ki, float Kd);
     void reset(void);
     float compute();
-    double TaMax; // maximum expected sample time
-    double Ta; // sampling time	
+    float TaMax; // maximum expected sample time
+    float Ta; // sampling time	
     float w; // set value
     float x; // current value
     float esum; // error sum

@@ -21,7 +21,7 @@ float stanleyTrackingNormalP = STANLEY_CONTROL_P_NORMAL;
 float stanleyTrackingSlowK = STANLEY_CONTROL_K_SLOW;
 float stanleyTrackingSlowP = STANLEY_CONTROL_P_SLOW;    
 
-float setSpeed = 0.1; // linear speed (m/s)
+float setSpeed = 0.2; // linear speed (m/s)
 float setDockingSpeed = 0.2; // linear speed (m/s)
 Point last_rotation_target;
 bool rotateLeft = false;
@@ -203,7 +203,7 @@ void trackLine(bool runControl){
       rotateLeft = false;
       rotateRight = false;
       // reverse rotation (*-1) - slowly rotate back
-      angular = 1.5 * 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
+      angular = 1.2 * 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
     }
     if (rotateRight) angular *= -1;
   } 
@@ -238,7 +238,7 @@ void trackLine(bool runControl){
           }
                  
     }
-     else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
+     else if (((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
           || ((linearMotionStartTime != 0) && (millis() < linearMotionStartTime + 3000))                      // leaving  
        ) 
     {

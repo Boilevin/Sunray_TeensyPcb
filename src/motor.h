@@ -31,6 +31,7 @@ class Motor {
     bool motorMowOverload; 
     bool tractionMotorsEnabled;       
     bool enableMowMotor;
+    bool motorMowForwardSet; 
     bool odometryError;    
     unsigned long motorOverloadDuration; // accumulated duration (ms)
     int  pwmMax;
@@ -61,7 +62,8 @@ class Motor {
     float motorMow1SenseLP;  // mower motor current (amps, low-pass) 
     float motorMow2SenseLP;  // mower motor current (amps, low-pass) 
     float motorMow3SenseLP;  // mower motor current (amps, low-pass) 
-
+    PID motorLeftPID;
+    PID motorRightPID; 
     float motorsSenseLP; // all motors current (amps, low-pass)
     float motorLeftSenseLPNorm; 
     float motorRightSenseLPNorm;
@@ -89,7 +91,7 @@ class Motor {
     float motorMowRpmCurrLP;    
     float motorLeftRpmLast;
     float motorRightRpmLast;
-    bool motorMowForwardSet; 
+    
     float motorMowPWMSet;  
     float motorMowPWMCurr; 
     int motorLeftPWMCurr;
@@ -97,15 +99,14 @@ class Motor {
     float motorMowPWMCurrLP; 
     float motorLeftPWMCurrLP;
     float motorRightPWMCurrLP;    
-    unsigned long lastControlTime;    
+    int lastControlTime;    
     unsigned long nextSenseTime;          
     bool recoverMotorFault;
     int recoverMotorFaultCounter;
     unsigned long nextRecoverMotorFaultTime;
     int motorLeftTicksZero;    
     int motorRightTicksZero;    
-    PID motorLeftPID;
-    PID motorRightPID;        
+           
     bool setLinearAngularSpeedTimeoutActive;
     unsigned long setLinearAngularSpeedTimeout;    
     void speedPWM ( int pwmLeft, int pwmRight, int pwmMow );

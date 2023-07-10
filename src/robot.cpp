@@ -570,6 +570,7 @@ void myCallback() {
 
   CONSOLE.println("warning Watchdog detect that loops take too long duration ");
   CONSOLE.println("Tennsy can automaticly reboot if issue is not reset ");
+  CONSOLE.println("Y3");//start to stop raspberry pi
   // try to stop everything imediatly
   //robot.setNextState(STATE_OFF, 0);
   return;
@@ -743,7 +744,7 @@ void start(){
     CONSOLE.println("Watchdog configuration start ");
     WDT_timings_t config;
     config.trigger = 2;  /* in seconds, 0->128 */
-    config.timeout = 10; /* in seconds, 0->128 */
+    config.timeout = 30; /* in seconds, 0->128 */
     config.callback = myCallback;
     wdt.begin(config);
     CONSOLE.println("Watchdog configuration Finish ");

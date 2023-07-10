@@ -22,7 +22,8 @@ void GpsWaitFixOp::begin(){
     //angular = 0;      
     //mow = false;
     motor.setLinearAngularSpeed(0,0, false); 
-    motor.setMowState(false);     
+    //bber don't stop mow motor during waiting for a new valid gps
+    //motor.setMowState(false);     
 }
 
 

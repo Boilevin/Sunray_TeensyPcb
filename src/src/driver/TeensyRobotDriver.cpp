@@ -157,42 +157,21 @@ void OdometryMowISR(){
   odomTicksMow++;    
 }
 
-
-void OdometryLeftISR(){			  
-  if (digitalRead(pinOdometryLeft) == LOW) return;
-  if (millis() < motorLeftTicksTimeout) return; // eliminate spikes  
-  #ifdef SUPER_SPIKE_ELIMINATOR
-    unsigned long duration = millis() - motorLeftTransitionTime;
-    if (duration > 5) duration = 0;
-    motorLeftTransitionTime = millis();
-    motorLeftDurationMax = 0.7 * max(motorLeftDurationMax, ((float)duration));
-    motorLeftTicksTimeout = millis() + motorLeftDurationMax;
-  #else
-    motorLeftTicksTimeout = millis() + 1;
-  #endif
-  odomTicksLeft++;    
+void OdometryLeftISR()
+{
+  odomTicksLeft++;
+  asm("dsb");
 }
 
-void OdometryRightISR(){			
-  if (digitalRead(pinOdometryRight) == LOW) return;  
-  if (millis() < motorRightTicksTimeout) return; // eliminate spikes
-  #ifdef SUPER_SPIKE_ELIMINATOR
-    unsigned long duration = millis() - motorRightTransitionTime;
-    if (duration > 5) duration = 0;  
-    motorRightTransitionTime = millis();
-    motorRightDurationMax = 0.7 * max(motorRightDurationMax, ((float)duration));  
-    motorRightTicksTimeout = millis() + motorRightDurationMax;
-  #else
-    motorRightTicksTimeout = millis() + 1;
-  #endif
-  odomTicksRight++;        
-  
-  #ifdef TEST_PIN_ODOMETRY
-    testValue = !testValue;
-    digitalWrite(pinKeyArea2, testValue);  
-  #endif
+void OdometryRightISR()
+{
+  odomTicksRight++;
+#ifdef TEST_PIN_ODOMETRY
+  testValue = !testValue;
+  digitalWrite(pinKeyArea2, testValue);
+#endif
+  asm("dsb");
 }
-
 
 AmMotorDriver::AmMotorDriver(){
 
@@ -441,10 +420,16 @@ void AmMotorDriver::begin(){
  // pinMode(pinLift, INPUT_PULLUP);
 
   // enable interrupts
-  attachInterrupt(pinOdometryLeft, OdometryLeftISR, CHANGE);  
-  attachInterrupt(pinOdometryRight, OdometryRightISR, CHANGE);  
- // attachInterrupt(pinMotorMowRpm, OdometryMowISR, CHANGE);  
-    
+
+  
+   #ifdef __IMXRT1062__  //teensy 4
+    attachInterrupt(digitalPinToInterrupt(pinOdometryRight), OdometryRightISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(pinOdometryLeft), OdometryLeftISR, CHANGE); 
+   #else
+    attachInterrupt(pinOdometryLeft, OdometryLeftISR, CHANGE);  
+    attachInterrupt(pinOdometryRight, OdometryRightISR, CHANGE); 
+    attachInterrupt(pinMotorMowRpm, OdometryMowISR, CHANGE);  
+   #endif
 	//pinMan.setDebounce(pinOdometryLeft, 100);  // reject spikes shorter than usecs on pin
 	//pinMan.setDebounce(pinOdometryRight, 100);  // reject spikes shorter than usecs on pin	
   
@@ -818,8 +803,11 @@ void AmBatteryDriver::run(){
 
     
 float AmBatteryDriver::getBatteryVoltage(){
-  if (!powerboard_I2c_line_Ok) return;
   float voltage;
+  if (!powerboard_I2c_line_Ok){
+    voltage=0;
+    return voltage;
+  } 
   float D5VoltageDrop=0.8; // drop voltage on diode
   float batvolt = MotRightIna226.readBusVoltage() ;
   batvolt = batvolt + D5VoltageDrop;
@@ -829,8 +817,12 @@ float AmBatteryDriver::getBatteryVoltage(){
 }
 
 float AmBatteryDriver::getChargeVoltage(){
-  if (!powerboard_I2c_line_Ok) return;
   float voltage;
+  if (!powerboard_I2c_line_Ok)
+  {
+    voltage = 0;
+    return voltage;
+  }
   float chgvolt = ChargeIna226.readBusVoltage() ;
   double accel = 0.05;  //filter percent
   if (abs(voltage - chgvolt) > 8)   voltage = chgvolt; else voltage = (1.0 - accel) * voltage + accel * chgvolt;
@@ -839,8 +831,12 @@ float AmBatteryDriver::getChargeVoltage(){
 
 
 float AmBatteryDriver::getChargeCurrent(){ 
-    if (!powerboard_I2c_line_Ok) return;
     float amps;
+    if (!powerboard_I2c_line_Ok) {
+      amps = 0;
+      return amps;
+    }
+    
     float curramp = ChargeIna226.readBusPower(); //  ?? sense don't work so read power and divise by voltage
     if (getChargeVoltage() != 0) {
       curramp = curramp / getChargeVoltage();

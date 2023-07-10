@@ -123,6 +123,13 @@ void Motor::begin() {
   motorMowSpinUpTime = 0;
 
   motorRecoveryState = false;
+  CONSOLE.print("PID Right Motor kp ");
+  CONSOLE.print(motorRightPID.Kp  );
+  CONSOLE.print(" ki ");
+  CONSOLE.print(motorRightPID.Ki  );
+  CONSOLE.print(" kd ");
+  CONSOLE.println(motorRightPID.Kd  );
+  
 }
 
 
@@ -162,15 +169,21 @@ void Motor::setLinearAngularSpeed(float linear, float angular, bool useLinearRam
    float lspeed = linearSpeedSet - angularSpeedSet * (wheelBaseCm /100.0 /2);          
    // RPM = V / (2*PI*r) * 60
    motorRightRpmSet =  rspeed / (PI*(((float)wheelDiameter)/1000.0)) * 60.0;   
-   motorLeftRpmSet = lspeed / (PI*(((float)wheelDiameter)/1000.0)) * 60.0;   
-//   CONSOLE.print("setLinearAngularSpeed ");
-//   CONSOLE.print(linear);
-//   CONSOLE.print(",");
-//   CONSOLE.print(angular); 
-//   CONSOLE.print(",");
-//   CONSOLE.print(lspeed);
-//   CONSOLE.print(",");
-//   CONSOLE.println(rspeed);
+   motorLeftRpmSet = lspeed / (PI*(((float)wheelDiameter)/1000.0)) * 60.0;
+
+  //  if ((millis() > timeToShowInfo1) && (stateOp != OP_IDLE))
+  //  {
+  //    timeToShowInfo1 = millis() + 500;
+  //    CONSOLE.print(setSpeed);
+  //    CONSOLE.print("setLinearAAAAAngularSpeed ");
+  //    CONSOLE.print(linear);
+  //    CONSOLE.print(",");
+  //    CONSOLE.print(angular);
+  //    CONSOLE.print(",");
+  //    CONSOLE.print(motorLeftPWMCurr);
+  //    CONSOLE.print(",");
+  //    CONSOLE.println(motorRightPWMCurr);
+  //  }
 }
 
 
@@ -283,9 +296,9 @@ void Motor::run() {
     }
   }
   
-  int ticksLeft;
-  int ticksRight;
-  int ticksMow;
+  int ticksLeft=0;
+  int ticksRight=0;
+  int ticksMow=0;
   motorDriver.getMotorEncoderTicks(ticksLeft, ticksRight, ticksMow);  
   
   if (motorLeftPWMCurr < 0) ticksLeft *= -1;
@@ -296,17 +309,22 @@ void Motor::run() {
   motorMowTicks += ticksMow;
   //CONSOLE.println(motorMowTicks);
 
-  unsigned long currTime = millis();
-  float deltaControlTimeSec =  ((float)(currTime - lastControlTime)) / 1000.0;
-  lastControlTime = currTime;
+  
+  int deltaControlTime =  millis() - lastControlTime;
+  lastControlTime = millis();
 
   // calculate speed via tick count
   // 2000 ticksPerRevolution: @ 30 rpm  => 0.5 rps => 1000 ticksPerSec
   // 20 ticksPerRevolution: @ 30 rpm => 0.5 rps => 10 ticksPerSec
-  motorLeftRpmCurr = 60.0 * ( ((float)ticksLeft) / ((float)ticksPerRevolution) ) / deltaControlTimeSec;
-  motorRightRpmCurr = 60.0 * ( ((float)ticksRight) / ((float)ticksPerRevolution) ) / deltaControlTimeSec;
-  motorMowRpmCurr = 60.0 * ( ((float)ticksMow) / ((float)6.0) ) / deltaControlTimeSec; // assuming 6 ticks per revolution
+  motorLeftRpmCurr = 60000.0 * ( (float)(ticksLeft) / ((float)ticksPerRevolution) ) / ((float)deltaControlTime);
+  motorRightRpmCurr = 60000.0 * ( ((float)ticksRight) / ((float)ticksPerRevolution) ) / ((float)deltaControlTime);
+  motorMowRpmCurr = 60000.0 * ( ((float)ticksMow) / ((float)6.0) ) / deltaControlTime; // assuming 6 ticks per revolution
   float lp = 0.9; // 0.995
+  // motorLeftRpmCurr  = double ((( ((double)ticksLeft) / ((double)odometryTicksPerRevolution)) / ((double)(millis() - lastMotorRpmTime))) * 60000.0);
+  // motorRightRpmCurr = double ((( ((double)ticksRight) / ((double)odometryTicksPerRevolution)) / ((double)(millis() - lastMotorRpmTime))) * 60000.0);
+  // lastMotorRpmTime = millis();
+
+
   motorLeftRpmCurrLP = lp * motorLeftRpmCurrLP + (1.0-lp) * motorLeftRpmCurr;
   motorRightRpmCurrLP = lp * motorRightRpmCurrLP + (1.0-lp) * motorRightRpmCurr;
   motorMowRpmCurrLP = lp * motorMowRpmCurrLP + (1.0-lp) * motorMowRpmCurr;
@@ -539,18 +557,24 @@ void Motor::control(){
   if ((abs(motorRightRpmSet) < 0.01) && (motorRightPWMCurr < 30)) motorRightPWMCurr = 0;
 
   //########################  Print Motor Parameter to LOG ############################
-  if (timeToShowInfo > millis())
-  {
-    timeToShowInfo = millis() + 500;
-    CONSOLE.print("rpm L/R set= ");
-    CONSOLE.print(motorLeftRpmSet);
-    CONSOLE.print(",");
-    CONSOLE.print(motorRightRpmSet);
-    CONSOLE.print("   curr= ");
-    CONSOLE.print(motorLeftRpmCurr);
-    CONSOLE.print(",");
-    CONSOLE.println(motorRightRpmCurr);
-  }
+  //if ((millis()>timeToShowInfo ) && (stateOp != OP_IDLE))
+  // if ((millis()>timeToShowInfo ) )
+  // {
+  //   timeToShowInfo = millis() + 500;
+
+  //   CONSOLE.print("rpm L/R set/Curr/pwm= ");
+  //   CONSOLE.print(motorLeftRpmSet);
+  //   CONSOLE.print(" , ");
+  //   CONSOLE.print(motorLeftRpmCurr);
+  //   CONSOLE.print(" , ");
+  //   CONSOLE.print(motorLeftPWMCurr);
+  //   CONSOLE.print("  /  ");
+  //   CONSOLE.print(motorRightRpmSet);
+  //   CONSOLE.print(",");
+  //   CONSOLE.print(motorRightRpmCurr);
+  //   CONSOLE.print(",");
+  //   CONSOLE.println(motorRightPWMCurr);
+  // }
 
   //########################  Calculate PWM for mowing motor ############################
   
@@ -617,7 +641,7 @@ void Motor::test(){
   int pwmRight = 200; 
 
   bool slowdown = true;
-  unsigned long stopTicks = ticksPerRevolution * 10;
+  long stopTicks = ticksPerRevolution * 10;
   unsigned long nextControlTime = 0;
   while (motorLeftTicks < stopTicks || motorRightTicks < stopTicks){
     if (millis() > nextControlTime){
@@ -666,7 +690,7 @@ void Motor::distanceTest(){
   int pwmLeft = 150;
   int pwmRight = 150; 
   bool slowdown = true;
-  unsigned long stopTicks = ticksPerCm * 300;
+  long stopTicks = ticksPerCm * 300;
   unsigned long nextControlTime = 0;
   while (motorLeftTicks < stopTicks || motorRightTicks < stopTicks){
     if (millis() > nextControlTime){
