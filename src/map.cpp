@@ -477,7 +477,8 @@ void Map::begin(){
   //bber
   //mapID=3; 
   CONSOLE.print("sizeof Point=");
-  CONSOLE.println(sizeof(Point));  
+  CONSOLE.println(sizeof(Point)); 
+  CONSOLE.println("Map Begin"); 
   load();
   dump();
 }
@@ -509,18 +510,18 @@ void Map::dump(){
   points.dump();
   CONSOLE.print("perimeter pts: ");
   CONSOLE.println(perimeterPoints.numPoints);
-  //perimeterPoints.dump();
+  perimeterPoints.dump();
   CONSOLE.print("exclusion pts: ");
   CONSOLE.println(exclusionPointsCount);  
   CONSOLE.print("exclusions: ");  
   CONSOLE.println(exclusions.numPolygons);  
-  //exclusions.dump();  
+  exclusions.dump();  
   CONSOLE.print("dock pts: ");
   CONSOLE.println(dockPoints.numPoints);
-  //dockPoints.dump();
+  dockPoints.dump();
   CONSOLE.print("mow pts: ");  
   CONSOLE.println(mowPoints.numPoints);  
-  //mowPoints.dump();
+  mowPoints.dump();
   if (mowPoints.numPoints > 0){
     CONSOLE.print("first mow point:");
     CONSOLE.print(mowPoints.points[0].x());
@@ -580,7 +581,8 @@ bool Map::load(){
   res &= perimeterPoints.read(mapFile);
   res &= exclusions.read(mapFile);    
   res &= dockPoints.read(mapFile);
-  res &= mowPoints.read(mapFile);        
+  res &= mowPoints.read(mapFile);  
+
   
   mapFile.close();  
   long expectedCRC = calcMapCRC();
@@ -606,6 +608,8 @@ bool Map::save(){
   bool res = true;
 #if defined(ENABLE_SD_RESUME)  
   CONSOLE.print("map save... ");
+  //bber300
+  SD.remove("map.bin");
   mapFile = SD.open("map.bin", FILE_CREATE); // O_WRITE | O_CREAT);
   if (!mapFile){        
     CONSOLE.println("ERROR opening file for writing");

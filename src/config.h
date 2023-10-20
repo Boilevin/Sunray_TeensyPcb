@@ -61,6 +61,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define DRV_ARDUMOWER     1   // keep this for Ardumower
 //#define DRV_SIM_ROBOT     1   // simulation
 
+//if a raspberry is connected on Usb port
+#define raspberryUse true
 
 // ------- Bluetooth4.0/BLE module -----------------------------------
 // see Wiki on how to install the BLE module and configure the jumpers:
@@ -302,14 +304,14 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define CURRENT_FACTOR 1.98   // PCB1.4 (non-bridged INA169, max. 2.5A)
 //#define CURRENT_FACTOR 2.941  // PCB1.4 (bridged INA169, max. 5A)
 
-#define GO_HOME_VOLTAGE   22.5  // start going to dock below this voltage
+#define GO_HOME_VOLTAGE   23.2  // start going to dock below this voltage
 // The battery will charge if both battery voltage is below that value and charging current is above that value.
 #define BAT_FULL_VOLTAGE  29.3  // start mowing again at this voltage
-#define BAT_FULL_CURRENT  0.1   // start mowing again below this charging current (amps)
+#define BAT_FULL_CURRENT  0.00   // start mowing again below this charging current (amps)
 
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#Automatic_battery_switch_off
-#define BAT_SWITCH_OFF_IDLE  false        // switch off if idle (JP8 must be set to autom.)
-#define BAT_SWITCH_OFF_UNDERVOLTAGE  false  // switch off if undervoltage (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_IDLE  true        // switch off if idle (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_UNDERVOLTAGE  true // switch off if undervoltage (JP8 must be set to autom.)
 
 
 // ------ GPS ------------------------------------------
@@ -340,11 +342,11 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // configure ublox f9p with optimal settings (will be stored in f9p RAM only)
 // NOTE: due to a PCB1.3 bug GPS_RX pin is not working and you have to fix this by a wire:
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#PCB1.3_GPS_pin_fix_and_wire_fix   (see 'GPS wire fix')
-#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-//#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
+//#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
-//#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
+#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+//#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 //#define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 #define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
@@ -405,7 +407,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define STANLEY_CONTROL_K_NORMAL  0.3   // 1.0 for path tracking control (lateral gain) when mowing
 
 #define STANLEY_CONTROL_P_SLOW    1.1   // 3.0 for path tracking control (angular gain) when docking tracking
-#define STANLEY_CONTROL_K_SLOW    0.3   // 0.1 for path tracking control (lateral gain) when docking tracking
+#define STANLEY_CONTROL_K_SLOW    0.1   // 0.1 for path tracking control (lateral gain) when docking tracking
 
 
 // ----- other options --------------------------------------------

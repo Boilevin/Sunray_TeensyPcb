@@ -111,11 +111,14 @@ void cmdTuneParam(){
               break;
             //battery setting
             case 8:
-              battery.startChargingIfBelow = int(floatValue);
+              battery.startChargingIfBelow = floatValue;
               break;
             //speed setting
             case 9:
               setDockingSpeed = int(floatValue);
+              break;
+            case 10:
+              battery.batFullCurrent = floatValue;
               break;
 
            } 
@@ -294,8 +297,10 @@ void cmdWaypoint(){
     //Serial.print("ch=");
     //Serial.println(ch);
     if ((ch == ',') || (idx == cmd.length()-1)){            
-      float intValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toInt();
+      int intValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toInt();
       float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();
+      floatValue=roundf(floatValue * 100) / 100;
+      
       if (counter == 1){                            
           widx = intValue;
       } else if (counter == 2){
@@ -444,9 +449,9 @@ void cmdReadPerimeterPoints(){
   String s = F("RP");                     // response
   for (int i=StartIdx; i < EndIdx; i++){ 
     s += F(",");
-    s += maps.perimeterPoints.points[i].x();
+    s += roundf(maps.perimeterPoints.points[i].x()* 100) / 100;
     s += F(",");
-    s += maps.perimeterPoints.points[i].y();
+    s += roundf(maps.perimeterPoints.points[i].y()* 100) / 100;
   }
 
   cmdAnswer(s);       
@@ -495,9 +500,9 @@ void cmdReadDockPoints(){
   String s = F("RD");                     // response
   for (int i=StartIdx; i < EndIdx; i++){ 
     s += F(",");
-    s += maps.dockPoints.points[i].x();
+    s += roundf(maps.dockPoints.points[i].x()* 100) / 100;
     s += F(",");
-    s += maps.dockPoints.points[i].y();
+    s += roundf(maps.dockPoints.points[i].y()* 100) / 100;
   }
 
   cmdAnswer(s);       
@@ -546,9 +551,9 @@ void cmdReadMowPoints(){
   String s = F("RM");                     // response
   for (int i=StartIdx; i < EndIdx; i++){ 
     s += F(",");
-    s += maps.mowPoints.points[i].x();
+    s += roundf(maps.mowPoints.points[i].x()* 100) / 100;
     s += F(",");
-    s += maps.mowPoints.points[i].y();
+    s += roundf(maps.mowPoints.points[i].y()* 100) / 100;
   }
 
   cmdAnswer(s);       
@@ -597,9 +602,9 @@ void cmdReadFreePoints(){
   String s = F("RF");                     // response
   for (int i=StartIdx; i < EndIdx; i++){ 
     s += F(",");
-    s += maps.freePoints.points[i].x();
+    s += roundf(maps.freePoints.points[i].x()* 100) / 100;
     s += F(",");
-    s += maps.freePoints.points[i].y();
+    s += roundf(maps.freePoints.points[i].y()* 100) / 100;
   }
 
   cmdAnswer(s);       
@@ -653,9 +658,9 @@ void cmdReadExclusionPoints(){
   String s = F("RX");                     // response
   for (int i=StartIdx; i < EndIdx; i++){ 
     s += F(",");
-    s += maps.exclusions.polygons[ExclusionIdx].points[i].x();
+    s += roundf(maps.exclusions.polygons[ExclusionIdx].points[i].x()* 100) / 100;
     s += F(",");
-    s += maps.exclusions.polygons[ExclusionIdx].points[i].y();
+    s += roundf(maps.exclusions.polygons[ExclusionIdx].points[i].y()* 100) / 100;
   }
 
   cmdAnswer(s);       
@@ -673,7 +678,7 @@ void cmdExclusionCount(){
     //Serial.print("ch=");
     //Serial.println(ch);
     if ((ch == ',') || (idx == cmd.length()-1)){            
-      float intValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toInt();
+      int intValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toInt();
       // float floatValue = cmd.substring(lastCommaIdx+1, ch==',' ? idx : idx+1).toFloat();
       if (counter == 1){                            
           widx = intValue;
@@ -1276,7 +1281,9 @@ if (cmd[3] == 'R'){       // Handling for apps to read out to actual used perime
 void processConsole(){
   char ch;      
   if (CONSOLE.available()){
-    battery.resetIdle();  
+    //bber 300
+    // do not reset idle when raspberry pi query(AT+S) or the poweroffIdle can't work
+    if (!raspberryUse) battery.resetIdle();  
     while ( CONSOLE.available() ){               
       ch = CONSOLE.read();          
       if ((ch == '\r') || (ch == '\n')) {        
@@ -1645,12 +1652,14 @@ void outputConsole(){
     struct rusage r_usage;
     getrusage(RUSAGE_SELF, &r_usage);
     CONSOLE.print(r_usage.ru_maxrss);
+    CONSOLE.println();
 #elif __SAMD51__    // GCM4
     CONSOLE.print(" freem=");
     CONSOLE.print(freeMemory());
     uint32_t *spReg = (uint32_t *)__get_MSP(); // stack pointer
     CONSOLE.print(" sp=");
     CONSOLE.print(*spReg, HEX);
+    CONSOLE.println();
 #elif __IMXRT1062__ // teensy
     //CONSOLE.print(" freem=");
     //CONSOLE.print(freeMemory());
@@ -1658,6 +1667,7 @@ void outputConsole(){
     uint32_t *spReg = (uint32_t *)__get_MSP(); // stack pointer
     CONSOLE.print(" sp=");
     CONSOLE.print(*spReg, HEX);
+    CONSOLE.println();
     */
 
 #endif

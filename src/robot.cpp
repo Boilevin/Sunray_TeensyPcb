@@ -809,7 +809,7 @@ void detectSensorMalfunction(){
   if (ENABLE_FAULT_OBSTACLE_AVOIDANCE){
     // there is a motor error (either unrecoverable fault signal or a malfunction) and we should try an obstacle avoidance
     if (motor.motorError){
-      CONSOLE.println("motor error!");
+      CONSOLE.println("");
       activeOp->onMotorError();
       return;      
     }  
@@ -999,7 +999,7 @@ void run(){
   
   // state saving
   if (millis() >= nextSaveTime){  
-    nextSaveTime = millis() + 5000;
+    nextSaveTime = millis() + 25000;
     saveState();
   }
   

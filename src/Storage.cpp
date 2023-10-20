@@ -147,6 +147,7 @@ bool loadState(){
   res &= (stateFile.read((uint8_t*)&absolutePosSource, sizeof(absolutePosSource)) != 0);
   res &= (stateFile.read((uint8_t*)&absolutePosSourceLon, sizeof(absolutePosSourceLon)) != 0);
   res &= (stateFile.read((uint8_t*)&absolutePosSourceLat, sizeof(absolutePosSourceLat)) != 0); 
+  
   stateFile.close();  
   CONSOLE.println("ok");
   stateCRC = calcStateCRC();
@@ -161,7 +162,6 @@ bool loadState(){
 }
 
 
-
 bool saveMap(int mapId){   
   bool res = true;
 
@@ -174,11 +174,17 @@ bool saveMap(int mapId){
   stateCRC = crc;
   dumpState();
   CONSOLE.print("save state... ");
-  //stateFile = SD.open("state.bin",  FILE_CREATE); // O_WRITE | O_CREAT);
-  stateFile = SD.open("state"" + mapId + "".bin",  FILE_CREATE); // O_WRITE | O_CREAT);
+
+  #ifdef __SAMD51__    // GCM4
+   stateFile = SD.open("state.bin",  FILE_CREATE); // O_WRITE | O_CREAT);
+  #elif __IMXRT1062__  //teensy 
+   SD.remove("state.bin");
+   stateFile = SD.open("state.bin",FILE_CREATE); // O_WRITE | O_CREAT);
+  #endif
+
 
   if (!stateFile){        
-    CONSOLE.println("ERROR opening file for writing");
+    CONSOLE.println("ERROR opening state.bin for writing");
     return false;
   }
   uint32_t marker = 0x10001003;
@@ -231,11 +237,12 @@ bool saveState(){
 #ifdef __SAMD51__    // GCM4
   stateFile = SD.open("state.bin",  FILE_CREATE); // O_WRITE | O_CREAT);
 #elif __IMXRT1062__  //teensy 
-  stateFile = SD.open("state.bin",FILE_WRITE); // O_WRITE | O_CREAT);
+  SD.remove("state.bin");
+  stateFile = SD.open("state.bin",FILE_CREATE); // O_WRITE | O_CREAT);
 #endif
 
   if (!stateFile){        
-    CONSOLE.println("ERROR opening file for writing");
+    CONSOLE.println("ERROR opening state.bin for writing");
     return false;
   }
   uint32_t marker = 0x10001003;
