@@ -85,7 +85,8 @@ void Motor::begin() {
   motorMow3SenseLP = 0; 
   motorMowSenseLP = 0;
   motorsSenseLP = 0;
-
+  motorMowfaultcurrent = MOW_FAULT_CURRENT;
+  motorMowOverloadCurrent = MOW_OVERLOAD_CURRENT;
   activateLinearSpeedRamp = USE_LINEAR_SPEED_RAMP;
   linearSpeedSet = 0;
   angularSpeedSet = 0;

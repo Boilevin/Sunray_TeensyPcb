@@ -34,8 +34,9 @@ class Motor {
     bool motorMowForwardSet; 
     bool odometryError;    
     unsigned long motorOverloadDuration; // accumulated duration (ms)
-    int  pwmMax;
-    int  pwmMaxMow;  
+    int pwmMax;
+    int pwmMaxMow; 
+    int pwmMinMow; 
     float  pwmSpeedOffset;
     float mowMotorCurrentAverage;
     float currentFactor;
@@ -52,8 +53,8 @@ class Motor {
     float motorMow1Sense;  // mower motor current (amps) 
     float motorMow2Sense;  // mower motor current (amps) 
     float motorMow3Sense;  // mower motor current (amps) 
-
-
+    float motorMowfaultcurrent; // mower motor error current (amps) 
+    float motorMowOverloadCurrent; // mower motor current to generate a driving speed reduction(amps) 
     float motorLeftSenseLP; // left motor current (amps, low-pass)
     float motorRightSenseLP; // right  motor current (amps, low-pass)
 

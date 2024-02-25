@@ -349,7 +349,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 //#define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
-#define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
+#define GPS_CONFIG_FILTER   true     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
 #define CPG_CONFIG_FILTER_MINELEV  10   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
 #define CPG_CONFIG_FILTER_NCNOTHRS 10   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
 #define CPG_CONFIG_FILTER_CNOTHRS  30   // 30 dbHz (robust), 13 dbHz (less robust)
@@ -387,15 +387,15 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
 //#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
 
-#define DOCK_AUTO_START true     // robot will automatically continue mowing after docked automatically
-//#define DOCK_AUTO_START false      // robot will not automatically continue mowing after docked automatically
+//#define DOCK_AUTO_START true     // robot will automatically continue mowing after docked automatically
+#define DOCK_AUTO_START false      // robot will not automatically continue mowing after docked automatically
 
 //#define DOCK_RETRY_TOUCH true   // robot will retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 #define DOCK_RETRY_TOUCH false   // robot will not retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 
 #define DOCK_UNDOCK_TRACKSLOW_DISTANCE 2 // set distance (m) from dock for trackslow (speed limit)
 
-#define UNDOCK_IGNORE_GPS_DISTANCE 1 // set distance (m) from dock to ignore gps while undocking
+#define UNDOCK_IGNORE_GPS_DISTANCE 2 // set distance (m) from dock to ignore gps while undocking
 
 // ---- path tracking -----------------------------------
 
