@@ -662,19 +662,11 @@ void Map::clearMap(){
  
 // set point
 bool Map::setPoint(int idx, float x, float y){  
-  if ((memoryCorruptions != 0) || (memoryAllocErrors != 0)){
-    CONSOLE.println("ERROR setPoint: memory errors");
-    return false; 
-  }  
+  
   if (idx == 0){   
     clearMap();
   }    
-  if (idx % 100 == 0){
-    if (freeMemory () < 20000){
-      CONSOLE.println("OUT OF MEMORY");
-      return false;
-    }
-  }
+  
   if (points.alloc(idx+1)){
     points.points[idx].setXY(x, y);      
     return true;
@@ -682,6 +674,27 @@ bool Map::setPoint(int idx, float x, float y){
   return false;
 }
 
+
+// bool Map::setPoint(int idx, float x, float y){  
+//   if ((memoryCorruptions != 0) || (memoryAllocErrors != 0)){
+//     CONSOLE.println("ERROR setPoint: memory errors");
+//     return false; 
+//   }  
+//   if (idx == 0){   
+//     clearMap();
+//   }    
+//   if (idx % 100 == 0){
+//     if (freeMemory () < 20000){
+//       CONSOLE.println("OUT OF MEMORY");
+//       return false;
+//     }
+//   }
+//   if (points.alloc(idx+1)){
+//     points.points[idx].setXY(x, y);      
+//     return true;
+//   }
+//   return false;
+// }
 
 // set number points for point type
 bool Map::setWayCount(WayType type, int count){
