@@ -639,7 +639,6 @@ bool Map::save(){
 
 
 void Map::finishedUploadingMap(){
-  CONSOLE.println("FI,");
   CONSOLE.println("finishedUploadingMap");
   mapCRC = calcMapCRC();
   dump();

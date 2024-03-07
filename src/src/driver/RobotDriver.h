@@ -20,7 +20,6 @@ class RobotDriver {
     bool ledStateGpsFloat;
     bool ledStateShutdown;
     bool ledStateError;
-    bool mapUploadingActive; //use to stop reading gps when a map is upload from PI
     virtual void begin() = 0;
     virtual void run() = 0;
     virtual bool getRobotID(String &id) = 0;
