@@ -46,7 +46,7 @@
 #include "PubSubClient.h"
 
 
-#define VER "Sunray,0.1.302"
+#define VER "Sunray,0.1.304"
 
 // operation types
 enum OperationType {
@@ -185,7 +185,7 @@ void updateStateOpText();
 void detectSensorMalfunction();
 void fanControl(bool rotate);
 void hornControl(bool noise);
-
+void outputConfig();
 bool detectLift();
 bool detectObstacle();
 bool detectObstacleRotation();

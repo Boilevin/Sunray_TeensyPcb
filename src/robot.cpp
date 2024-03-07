@@ -1050,7 +1050,11 @@ void run(){
     robotDriver.ledStateError = (stateOp == OP_ERROR);     
   }
 
-  gps.run();
+
+  if (!robotDriver.mapUploadingActive){
+      gps.run();
+  }
+  
     
   calcStats();
 

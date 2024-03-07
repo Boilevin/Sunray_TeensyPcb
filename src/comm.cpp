@@ -1280,7 +1280,16 @@ if (cmd[3] == 'R'){       // Handling for apps to read out to actual used perime
     if (cmd[4] == '7') cmdHornStop();     
 
    }
-  if (cmd[3] == 'Q') cmdMotorPlot();  
+  if (cmd[3] == 'Q') {
+    if (cmd.length() <= 4){
+      cmdMotorPlot(); 
+    } else {
+      if (cmd[4] == '1') outputConfig();
+    }    
+     
+  }
+
+
   if (cmd[3] == 'O'){
     if (cmd.length() <= 4){
       cmdObstacle();   // for developers
@@ -1307,6 +1316,11 @@ if (cmd[3] == 'R'){       // Handling for apps to read out to actual used perime
     } else {
       if (cmd[4] == '2') cmdGNSSReboot();   // for developers
       if (cmd[4] == '3') cmdSwitchOffRobot();   // for developers
+      if (cmd[4] == '4') robotDriver.mapUploadingActive=true; //stop reading gps until map is upload from pi
+      if (cmd[4] == '5') robotDriver.mapUploadingActive=false;
+
+
+
     }
   }
 }
