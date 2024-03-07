@@ -1280,7 +1280,13 @@ if (cmd[3] == 'R'){       // Handling for apps to read out to actual used perime
     if (cmd[4] == '7') cmdHornStop();     
 
    }
-  if (cmd[3] == 'Q') cmdMotorPlot();  
+  if (cmd[3] == 'Q') {
+     if (cmd.length() <= 4){
+      cmdMotorPlot(); 
+     } else {
+        if (cmd[4] == '1') outputConfig();   // for developers
+     }
+  } 
   if (cmd[3] == 'O'){
     if (cmd.length() <= 4){
       cmdObstacle();   // for developers
