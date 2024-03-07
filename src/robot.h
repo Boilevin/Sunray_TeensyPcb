@@ -185,7 +185,7 @@ void updateStateOpText();
 void detectSensorMalfunction();
 void fanControl(bool rotate);
 void hornControl(bool noise);
-void outputConfig();
+
 bool detectLift();
 bool detectObstacle();
 bool detectObstacleRotation();
