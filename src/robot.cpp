@@ -399,9 +399,9 @@ void outputConfig(){
   CONSOLE.print("FREEWHEEL_IS_AT_BACKSIDE: ");
   CONSOLE.println(FREEWHEEL_IS_AT_BACKSIDE);
   CONSOLE.print("WHEEL_BASE_CM: ");
-  CONSOLE.println(WHEEL_BASE_CM);
+  CONSOLE.println(motor.wheelBaseCm);
   CONSOLE.print("WHEEL_DIAMETER: ");
-  CONSOLE.println(WHEEL_DIAMETER);
+  CONSOLE.println(motor.wheelDiameter);
   #ifdef ENABLE_LIFT_DETECTION
     CONSOLE.println("ENABLE_LIFT_DETECTION");
     #ifdef LIFT_OBSTACLE_AVOIDANCE
@@ -411,7 +411,7 @@ void outputConfig(){
   CONSOLE.print("ENABLE_ODOMETRY_ERROR_DETECTION: ");
   CONSOLE.println(ENABLE_ODOMETRY_ERROR_DETECTION);
   CONSOLE.print("TICKS_PER_REVOLUTION: ");
-  CONSOLE.println(TICKS_PER_REVOLUTION);
+  CONSOLE.println(motor.ticksPerRevolution);
   #ifdef MOTOR_DRIVER_BRUSHLESS
     CONSOLE.println("MOTOR_DRIVER_BRUSHLESS");
   #endif
@@ -462,12 +462,15 @@ void outputConfig(){
   #endif
   #ifdef MAX_MOW_PWM
     CONSOLE.print("MAX_MOW_PWM: ");
-    CONSOLE.println(MAX_MOW_PWM);
+    CONSOLE.println(motor.pwmMaxMow);
+    CONSOLE.print("MIN_MOW_PWM: ");
+    CONSOLE.println(motor.pwmMinMow);
+    
   #endif
   CONSOLE.print("MOW_FAULT_CURRENT: ");
-  CONSOLE.println(MOW_FAULT_CURRENT);
+  CONSOLE.println(motor.motorMowfaultcurrent);
   CONSOLE.print("MOW_OVERLOAD_CURRENT: ");
-  CONSOLE.println(MOW_OVERLOAD_CURRENT);
+  CONSOLE.println(motor.motorMowOverloadCurrent);
   CONSOLE.print("ENABLE_OVERLOAD_DETECTION: ");
   CONSOLE.println(ENABLE_OVERLOAD_DETECTION);
   CONSOLE.print("ENABLE_FAULT_DETECTION: ");
@@ -496,15 +499,19 @@ void outputConfig(){
   CONSOLE.print("CURRENT_FACTOR: ");
   CONSOLE.println(CURRENT_FACTOR);
   CONSOLE.print("GO_HOME_VOLTAGE: ");
-  CONSOLE.println(GO_HOME_VOLTAGE);
+  CONSOLE.println(battery.batGoHomeIfBelow);
   CONSOLE.print("BAT_FULL_VOLTAGE: ");
   CONSOLE.println(BAT_FULL_VOLTAGE);
   CONSOLE.print("BAT_FULL_CURRENT: ");
-  CONSOLE.println(BAT_FULL_CURRENT);
+  CONSOLE.println(battery.batFullCurrent);
   CONSOLE.print("BAT_SWITCH_OFF_IDLE: ");
-  CONSOLE.println(BAT_SWITCH_OFF_IDLE);
+  CONSOLE.println(battery.batSwitchOffIfIdle);
   CONSOLE.print("BAT_SWITCH_OFF_UNDERVOLTAGE: ");
-  CONSOLE.println(BAT_SWITCH_OFF_UNDERVOLTAGE);
+  CONSOLE.println(battery.batSwitchOffIfBelow);
+  CONSOLE.print("BAT_START_CHARGING_VOLTAGE: ");
+  CONSOLE.println(battery.startChargingIfBelow);
+
+  
   #ifdef GPS_USE_TCP
     CONSOLE.println("GPS_USE_TCP");
   #endif
