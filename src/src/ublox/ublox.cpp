@@ -6,11 +6,11 @@
 #include "Arduino.h"
 #include "ublox.h"
 #include "../../config.h"
-#include "SparkFun_Ublox_Arduino_Library.h" 
+//#include "SparkFun_Ublox_Arduino_Library.h" 
+#include "SparkFun_u-blox_GNSS_v3.h" //Hartmut
 
-
-SFE_UBLOX_GPS configGPS; // used for f9p module configuration only
-
+//SFE_UBLOX_GPS configGPS; // used for f9p module configuration only
+SFE_UBLOX_GNSS_SERIAL configGPS; //Hartmut
 
 // used to send .ubx log files via 'sendgps.py' to Arduino (also set GPS to Serial in config for this)
 //#define GPS_DUMP   1    
@@ -119,6 +119,7 @@ bool UBLOX::configure(){
         setValueSuccess &= configGPS.addCfgValset8(0x20910045, 0); // CFG-MSGOUT-UBX_NAV_VELNED_USB     (off)
         setValueSuccess &= configGPS.addCfgValset8(0x2091026b, 0); // CFG-MSGOUT-UBX_RXM_RTCM_USB   (off)
         setValueSuccess &= configGPS.addCfgValset8(0x20910348, 0); // CFG-MSGOUT-UBX_NAV_SIG_USB   (off)
+        setValueSuccess &= configGPS.addCfgValset8(0x2091005e, 0); // CFG-MSGOUT-UBX_NAV_TIMEUTC_USB   (off)
         
         // ----- uart1 messages (Ardumower) -----------------          
         setValueSuccess &= configGPS.addCfgValset8(0x20910007, 0); // CFG-MSGOUT-UBX_NAV_PVT_UART1   (off)
@@ -126,7 +127,8 @@ bool UBLOX::configure(){
         setValueSuccess &= configGPS.addCfgValset8(0x20910034, 0); // CFG-MSGOUT-UBX_NAV_HPPOSLLH_UART1   (off)
         setValueSuccess &= configGPS.addCfgValset8(0x20910043, 0); // CFG-MSGOUT-UBX_NAV_VELNED_UART1     (off)
         setValueSuccess &= configGPS.addCfgValset8(0x20910269, 0); // CFG-MSGOUT-UBX_RXM_RTCM_UART1   (off)
-        setValueSuccess &= configGPS.sendCfgValset8(0x20910346, timeout); // CFG-MSGOUT-UBX_NAV_SIG_UART1   (off)
+        setValueSuccess &= configGPS.addCfgValset8(0x20910346, 0); // CFG-MSGOUT-UBX_NAV_SIG_UART1   (off)
+        setValueSuccess &= configGPS.sendCfgValset8(0x2091005c, timeout); // CFG-MSGOUT-UBX_NAV_TIMEUTC_UART1   (off)
       }
       else if (idx == 1){
         setValueSuccess &= configGPS.newCfgValset8(0x209100a8, 0, VAL_LAYER_RAM); // CFG-MSGOUT-NMEA_ID_DTM_UART2  (off)
@@ -206,7 +208,8 @@ bool UBLOX::configure(){
         setValueSuccess &= configGPS.addCfgValset8(0x20910036, 1); // CFG-MSGOUT-UBX_NAV_HPPOSLLH_USB   (every solution)
         setValueSuccess &= configGPS.addCfgValset8(0x20910045, 1); // CFG-MSGOUT-UBX_NAV_VELNED_USB     (every solution)
         setValueSuccess &= configGPS.addCfgValset8(0x2091026b, 5); // CFG-MSGOUT-UBX_RXM_RTCM_USB   (every 5 solutions)
-        setValueSuccess &= configGPS.addCfgValset8(0x20910348, 20); // CFG-MSGOUT-UBX_NAV_SIG_USB   (every 20 solutions)   
+        setValueSuccess &= configGPS.addCfgValset8(0x20910348, 20); // CFG-MSGOUT-UBX_NAV_SIG_USB   (every 20 solutions)
+        setValueSuccess &= configGPS.addCfgValset8(0x2091005e, 0); // CFG-MSGOUT-UBX_NAV_TIMEUTC_USB   (off)   
 
         // ----- uart1 messages (Ardumower) -----------------  
         setValueSuccess &= configGPS.addCfgValset8(0x20910007, 0); // CFG-MSGOUT-UBX_NAV_PVT_UART1   (off)
@@ -214,7 +217,8 @@ bool UBLOX::configure(){
         setValueSuccess &= configGPS.addCfgValset8(0x20910034, 1); // CFG-MSGOUT-UBX_NAV_HPPOSLLH_UART1   (every solution)
         setValueSuccess &= configGPS.addCfgValset8(0x20910043, 1); // CFG-MSGOUT-UBX_NAV_VELNED_UART1     (every solution)
         setValueSuccess &= configGPS.addCfgValset8(0x20910269, 5); // CFG-MSGOUT-UBX_RXM_RTCM_UART1   (every 5 solutions)
-        setValueSuccess &= configGPS.sendCfgValset8(0x20910346, 20, timeout); // CFG-MSGOUT-UBX_NAV_SIG_UART1   (every 20 solutions)       
+        setValueSuccess &= configGPS.addCfgValset8(0x20910346, 20); // CFG-MSGOUT-UBX_NAV_SIG_UART1   (every 20 solutions)  
+        setValueSuccess &= configGPS.sendCfgValset8(0x2091005c, 0, timeout); // CFG-MSGOUT-UBX_NAV_TIMEUTC_UART1   (off)  
       }
       if (setValueSuccess){
         CONSOLE.println("OK");
@@ -237,8 +241,9 @@ bool UBLOX::configure(){
 
 void UBLOX::reboot(){
   CONSOLE.println("rebooting GPS receiver...");
-  //configGPS.hardReset();
-  configGPS.GNSSRestart();
+  //configGPS.GNSSRestart();
+  configGPS.softwareResetGNSSOnly(); //Hartmut: kein Reboot mehr
+  
 }
 
 void UBLOX::parse(int b)
@@ -358,10 +363,43 @@ void UBLOX::addchk(int b) {
     
 
 void UBLOX::dispatchMessage() {
+  unsigned short year_u;
+  unsigned char month_u;
+  unsigned char day_u ;
+  unsigned char hour_u;
+  unsigned char mins_u;
+  unsigned char sec_u;   
     if (verbose) CONSOLE.println();
     switch (this->msgclass){
       case 0x01:
         switch (this->msgid) {
+          case 0x021:
+            { // UBX-NAV-TIMEUTC
+              iTOW = (unsigned long)this->unpack_int32(0);
+              year_u = (unsigned short)this->unpack_int16(12);
+              month_u = (unsigned char)this->unpack_int8(14);
+              day_u = (unsigned char)this->unpack_int8(15);
+              hour_u = (unsigned char)this->unpack_int8(16);
+              mins_u = (unsigned char)this->unpack_int8(17);
+              sec_u = (unsigned char)this->unpack_int8(18);              
+              if (verbose) {
+               /* CONSOLE.print("UBX-NAV-TIMEUTC ");
+                CONSOLE.print("year=");
+                CONSOLE.print(year);
+                CONSOLE.print("  month=");
+                CONSOLE.print(month);
+                CONSOLE.print("  day=");
+                CONSOLE.print(day);
+                CONSOLE.print("  hour=");
+                CONSOLE.print(hour);
+                CONSOLE.print("  min=");
+                CONSOLE.print(mins);
+                CONSOLE.print("  sec=");
+                CONSOLE.println(sec); 
+                */               
+              }
+            }
+            break;
           case 0x07:
             { // UBX-NAV-PVT
               iTOW = (unsigned long)this->unpack_int32(0);
@@ -489,7 +527,7 @@ void UBLOX::dispatchMessage() {
               relPosD = ((float)this->unpack_int32(16))/100.0;              
               solution = (SolType)((this->unpack_int32(60) >> 3) & 3);              
               solutionAvail = true;
-              solutionTimeout=millis() + 1000;
+              solutionTimeout=millis() + 1000;              
               if (verbose){
                 CONSOLE.print("UBX-NAV-RELPOSNED ");
                 CONSOLE.print("n=");
