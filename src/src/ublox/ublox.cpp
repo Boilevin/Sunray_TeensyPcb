@@ -363,25 +363,19 @@ void UBLOX::addchk(int b) {
     
 
 void UBLOX::dispatchMessage() {
-  unsigned short year_u;
-  unsigned char month_u;
-  unsigned char day_u ;
-  unsigned char hour_u;
-  unsigned char mins_u;
-  unsigned char sec_u;   
-    if (verbose) CONSOLE.println();
+  if (verbose) CONSOLE.println();
     switch (this->msgclass){
       case 0x01:
         switch (this->msgid) {
           case 0x021:
             { // UBX-NAV-TIMEUTC
               iTOW = (unsigned long)this->unpack_int32(0);
-              year_u = (unsigned short)this->unpack_int16(12);
-              month_u = (unsigned char)this->unpack_int8(14);
-              day_u = (unsigned char)this->unpack_int8(15);
-              hour_u = (unsigned char)this->unpack_int8(16);
-              mins_u = (unsigned char)this->unpack_int8(17);
-              sec_u = (unsigned char)this->unpack_int8(18);              
+              year = (unsigned short)this->unpack_int16(12);
+              month = (unsigned char)this->unpack_int8(14);
+              day = (unsigned char)this->unpack_int8(15);
+              hour = (unsigned char)this->unpack_int8(16);
+              mins = (unsigned char)this->unpack_int8(17);
+              sec = (unsigned char)this->unpack_int8(18);              
               if (verbose) {
                /* CONSOLE.print("UBX-NAV-TIMEUTC ");
                 CONSOLE.print("year=");

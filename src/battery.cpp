@@ -42,7 +42,7 @@ void Battery::begin()
 
   batMonitor = true;                  // monitor battery and charge voltage?
   batGoHomeIfBelow = GO_HOME_VOLTAGE; // 21.5  drive home voltage (Volt)
-  batSwitchOffIfBelow = 20;           // switch off battery if below voltage (Volt)
+  batSwitchOffIfBelow = 21;           // switch off battery if below voltage (Volt)
   batSwitchOffIfIdle = 600;           // switch off battery if idle (seconds)
   // The battery will charge if both battery voltage is below that value and charging current is above that value.
   batFullCurrent = BAT_FULL_CURRENT; // 0.2  current flowing when battery is fully charged (A)
@@ -273,13 +273,16 @@ void Battery::run()
         // if ((timeMinutes > 180) || (chargingCurrent < batFullCurrent)) {
         //  https://github.com/Ardumower/Sunray/issues/32
         if (chargingCompletedDelay > 5)        { // chargingCompleted check first after 6 * 5000ms = 30sec.
-          chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage) || (batteryVoltageSlopeLowCounter > 5));
+          //chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage) || (batteryVoltageSlopeLowCounter > 5));
+          //do not stop charging cycle on teensy PCB use the charger itself to manage battery
+          chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage));
+          
           if (chargingCompleted){
             DEBUG(F("END CHARGING Current= "));
-            DEBUGLN(chargingCurrent);
-            DEBUG(F("Voltage= "));
-            DEBUGLN(batteryVoltage);
-            DEBUG(F("VoltageSlopeLowCounter  Max 5 -> "));
+            DEBUG(chargingCurrent);
+            DEBUG(F(" Voltage= "));
+            DEBUG(batteryVoltage);
+            DEBUG(F(" VoltageSlopeLowCounter  Max 5 -> "));
             DEBUGLN(batteryVoltageSlopeLowCounter);
 
           }

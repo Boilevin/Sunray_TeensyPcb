@@ -1318,9 +1318,6 @@ if (cmd[3] == 'R'){       // Handling for apps to read out to actual used perime
       if (cmd[4] == '3') cmdSwitchOffRobot();   // for developers
       if (cmd[4] == '4') robotDriver.mapUploadingActive=true; //stop reading gps until map is upload from pi
       if (cmd[4] == '5') robotDriver.mapUploadingActive=false;
-
-
-
     }
   }
 }
