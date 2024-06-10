@@ -568,24 +568,24 @@ void UBLOX::dispatchMessage() {
     if (verbose) CONSOLE.println();
 }
 
-long UBLOX::unpack_int32(int offset) {
+int32_t UBLOX::unpack_int32(int offset) {
 
-    return this->unpack(offset, 4);
+    return (int32_t)this->unpack(offset, 4);
 }
 
-long UBLOX::unpack_int16(int offset) {
+int16_t UBLOX::unpack_int16(int offset) {
 
-    return this->unpack(offset, 2);
+    return (int16_t)this->unpack(offset, 2);
 }
 
-long UBLOX::unpack_int8(int offset) {
+int8_t UBLOX::unpack_int8(int offset) {
 
-    return this->unpack(offset, 1);
+    return (int8_t)this->unpack(offset, 1);
 }
 
-long UBLOX::unpack(int offset, int size) {
+int32_t UBLOX::unpack(int offset, int size) {
 
-    long value = 0; // four bytes on most Arduinos
+    int32_t value = 0; // four bytes on most Arduinos
 
     for (int k=0; k<size; ++k) {
         value <<= 8;

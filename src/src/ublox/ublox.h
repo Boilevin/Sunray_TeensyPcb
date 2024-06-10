@@ -63,10 +63,10 @@ class UBLOX : public GpsDriver {
     void begin();
     void addchk(int b);
     void dispatchMessage();
-    long unpack_int32(int offset);
-    long unpack_int16(int offset);
-    long unpack_int8(int offset);
-    long unpack(int offset, int size);
+    int32_t unpack_int32(int offset);
+    int16_t unpack_int16(int offset);
+    int8_t unpack_int8(int offset);
+    int32_t unpack(int offset, int size);
     void parse(int b);	  	    
 };
 

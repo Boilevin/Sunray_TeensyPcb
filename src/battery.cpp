@@ -126,7 +126,7 @@ void Battery::run()
     return;
   }
   if (millis() < nextBatteryTime) return;
-  nextBatteryTime = millis() + 50;
+  nextBatteryTime = millis() + 200;
   if (startupPhase == 1)  startupPhase = 2;
 
   // voltage
