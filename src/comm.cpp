@@ -96,6 +96,34 @@ void cmdTuneParam(){
             case 3: 
               stanleyTrackingSlowK = floatValue;
               break;
+            case 4:
+              motor.motorLeftPID.Kp = floatValue;
+              motor.motorRightPID.Kp = floatValue;              
+              break;
+            case 5:
+              motor.motorLeftPID.Ki = floatValue;
+              motor.motorRightPID.Ki = floatValue;
+              break;
+            case 6:
+              motor.motorLeftPID.Kd = floatValue;
+              motor.motorRightPID.Kd = floatValue;              
+              break;
+            case 7:
+            //not use here it's a low pass filter for motor RPM on mower with odometry low ticks
+             // motor.motorLeftLpf.Tf = floatValue;
+             // motor.motorRightLpf.Tf = floatValue;              
+              break;
+            case 8:
+              //motor.motorLeftPID.output_ramp = floatValue;
+              //motor.motorRightPID.output_ramp = floatValue;              
+              break;
+            case 9:
+              motor.pwmMax = floatValue;
+              break;
+
+
+
+
             //odometry setting
             case 54:
               motor.ticksPerRevolution = int(floatValue);
@@ -205,6 +233,9 @@ void cmdControl(){
           }
       } else if (counter == 8){
           if (intValue >= 0) sonar.enabled = (intValue == 1);
+      } else if (counter == 9){
+         if (intValue >= 0) motor.setMowMaxPwm(intValue);
+      
       }
       counter++;
       lastCommaIdx = idx;

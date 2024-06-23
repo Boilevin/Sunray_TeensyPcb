@@ -133,6 +133,9 @@ void Motor::begin() {
   
 }
 
+void Motor::setMowMaxPwm( int val ){
+  pwmMaxMow = val;
+}
 
 void Motor::speedPWM ( int pwmLeft, int pwmRight, int pwmMow )
 {
