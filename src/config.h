@@ -349,15 +349,15 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 #define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
-#define CPG_CONFIG_FILTER_MINELEV  3   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
-#define CPG_CONFIG_FILTER_NCNOTHRS 8   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
-#define CPG_CONFIG_FILTER_CNOTHRS  17   // 30 dbHz (robust), 13 dbHz (less robust)
+#define CPG_CONFIG_FILTER_MINELEV  12   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
+#define CPG_CONFIG_FILTER_NCNOTHRS 10   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
+#define CPG_CONFIG_FILTER_CNOTHRS  30   // 30 dbHz (robust), 13 dbHz (less robust)
 #define CPG_CONFIG_FILTER_MINCNO   30   // 30dbHz
 
-#define GPS_POSITION_OFFSET_ENABLED false // enable gps antenna position correction offset?
-#define GPS_POSITION_OFFSET_FORWARD 0.0 // offset to add fordwards (cm)
-#define GPS_POSITION_OFFSET_RIGHT 0.0 // offset to add to the right (cm)
-#define GPS_POSITION_OFFSET_UP -24.0 // offse to add upwards (cm), set to ground level for tilt compensation (-24 cm for standard ardumower)
+//#define GPS_POSITION_OFFSET_ENABLED false // enable gps antenna position correction offset?
+//#define GPS_POSITION_OFFSET_FORWARD 0.0 // offset to add fordwards (cm)
+//#define GPS_POSITION_OFFSET_RIGHT 0.0 // offset to add to the right (cm)
+//#define GPS_POSITION_OFFSET_UP -24.0 // offse to add upwards (cm), set to ground level for tilt compensation (-24 cm for standard ardumower)
 
 #define INVALID_GPS_TIMEOUT 30.0 // time in seconds to navigate with invalid GPS
 
@@ -419,7 +419,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define DOCK_RETRY_TOUCH true   // robot will retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 #define DOCK_RETRY_TOUCH false   // robot will not retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 
-#define DOCK_UNDOCK_TRACKSLOW_DISTANCE 5 // set distance (m) from dock for trackslow (speed limit)
+#define DOCK_UNDOCK_TRACKSLOW_DISTANCE 3 // set distance (m) from dock for trackslow (speed limit)
 
 #define UNDOCK_IGNORE_GPS_DISTANCE 2 // set distance (m) from dock to ignore gps while undocking
 
@@ -461,8 +461,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // ------ experimental options  -------------------------
 
 // drive curves smoothly?
-//#define SMOOTH_CURVES  true
-#define SMOOTH_CURVES  false
+#define SMOOTH_CURVES  true
+//#define SMOOTH_CURVES  false
 
 // --------- serial monitor output (CONSOLE) ------------------------
 // which Arduino Due USB port do you want to your for serial monitor output (CONSOLE)?

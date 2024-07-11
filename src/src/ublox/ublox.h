@@ -43,6 +43,7 @@ class UBLOX : public GpsDriver {
     void run() override;
     bool configure() override;  
     void reboot() override;
+    unsigned long solutionTimeout;   
   private:
     bool useTCP;
     Client* _client;    
@@ -58,7 +59,7 @@ class UBLOX : public GpsDriver {
     char payload[2000];                                          
     bool debug;
     bool verbose;
-    unsigned long solutionTimeout;    
+     
 
     void begin();
     void addchk(int b);
