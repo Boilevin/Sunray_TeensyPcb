@@ -349,7 +349,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 #define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
-#define CPG_CONFIG_FILTER_MINELEV  12   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
+#define CPG_CONFIG_FILTER_MINELEV  10   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
 #define CPG_CONFIG_FILTER_NCNOTHRS 10   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
 #define CPG_CONFIG_FILTER_CNOTHRS  30   // 30 dbHz (robust), 13 dbHz (less robust)
 #define CPG_CONFIG_FILTER_MINCNO   30   // 30dbHz

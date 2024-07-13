@@ -142,10 +142,9 @@ void trackLine(bool runControl){
   float targetDist = maps.distanceToTargetPoint(stateX, stateY);
   
   float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
-  if (SMOOTH_CURVES)
-    targetReached = (targetDist < 0.2);    
-  else 
-    targetReached = (targetDist < TARGET_REACHED_TOLERANCE);
+ 
+  targetReached = (targetDist < TARGET_REACHED_TOLERANCE);
+
 
   if ( (last_rotation_target.x() != target.x() || last_rotation_target.y() != target.y()) &&
         (rotateLeft || rotateRight ) ) {
@@ -157,12 +156,8 @@ void trackLine(bool runControl){
   // allow rotations only near last or next waypoint or if too far away from path
   // it might race between rotating mower and targetDist check below
   // if we race we still have rotateLeft or rotateRight true
-  if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) ||
-       rotateLeft || rotateRight ) {
-    if (SMOOTH_CURVES)
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
-    else     
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);
+  if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) || rotateLeft || rotateRight ) {
+       angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);
   } else {
      angleToTargetFits = true;
   }
@@ -280,6 +275,7 @@ void trackLine(bool runControl){
       p = stanleyTrackingSlowP; //STANLEY_CONTROL_P_SLOW;          
     }
     angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(motor.linearSpeedSet)));       // correct for path errors           
+    angular = max(-PI/16, min(PI/16, angular)); // restrict steering angle for stanley
     /*pidLine.w = 0;              
     pidLine.x = lateralError;
     pidLine.max_output = PI;
@@ -289,9 +285,11 @@ void trackLine(bool runControl){
     angular = -pidLine.y;   */
     //CONSOLE.print(lateralError);        
     //CONSOLE.print(",");        
-    //CONSOLE.println(angular/PI*180.0);            
+    //CONSOLE.println(angular/PI*180.0);   
+
     if (maps.trackReverse) linear *= -1;   // reverse line tracking needs negative speed
-    if (!SMOOTH_CURVES) angular = max(-PI/16, min(PI/16, angular)); // restrict steering angle for stanley
+    
+    
   }
   // check some pre-conditions that can make linear+angular speed zero
   if (fixTimeout != 0){
