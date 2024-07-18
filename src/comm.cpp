@@ -17,6 +17,11 @@
 #endif
 #include "RingBuffer.h"
 
+
+
+
+
+
 //#define VERBOSE 1
 
 unsigned long nextInfoTime = 0;
@@ -63,6 +68,7 @@ void cmdAnswer(String s){
   s += F("\r\n");
   cmdResponse = s;
 }
+
 
 // request tune param
 void cmdTuneParam(){
@@ -211,6 +217,7 @@ void cmdControl(){
       if (counter == 1){                            
           if (intValue >= 0) {
             motor.enableMowMotor = (intValue == 1);
+            
             motor.setMowState( (intValue == 1) );
           }
       } else if (counter == 2){                                      
@@ -235,7 +242,6 @@ void cmdControl(){
           if (intValue >= 0) sonar.enabled = (intValue == 1);
       } else if (counter == 9){
          if (intValue >= 0) motor.setMowMaxPwm(intValue);
-      
       }
       counter++;
       lastCommaIdx = idx;
@@ -260,7 +266,8 @@ void cmdControl(){
 
 // request motor 
 void cmdMotor(){
-  if (cmd.length()<6) return;  
+  if (cmd.length()<6) return; 
+   
   int counter = 0;
   int lastCommaIdx = 0;
   float linear=0;
