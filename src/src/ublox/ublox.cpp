@@ -476,8 +476,11 @@ void UBLOX::dispatchMessage()
     case 0x14:
     { // UBX-NAV-HPPOSLLH
       iTOW = (unsigned long)this->unpack_int32(4);
-      lon = (1e-7 * (this->unpack_int32(8) + (this->unpack_int8(24) * 1e-2)));
-      lat = (1e-7 * (this->unpack_int32(12) + (this->unpack_int8(25) * 1e-2)));
+      lon = 1e-7 * (((float)((int32_t)this->unpack_int32(8))) + ((float)((int8_t)this->unpack_int8(24))) * 1e-2);
+      lat = 1e-7 * (((float)((int32_t)this->unpack_int32(12))) + ((float)((int8_t)this->unpack_int8(25))) * 1e-2);
+
+      //lon = (1e-7 * (this->unpack_int32(8) + (this->unpack_int8(24) * 1e-2)));
+      //lat = (1e-7 * (this->unpack_int32(12) + (this->unpack_int8(25) * 1e-2)));
       height = (1e-3 * (this->unpack_int32(16) + (this->unpack_int8(26) * 1e-2))); // HAE (WGS84 height)
       // height = (1e-3 * (this->unpack_int32(20) +  (this->unpack_int8(27) * 1e-2))); // MSL height
       hAccuracy = ((double)((unsigned long)this->unpack_int32(28))) * 0.1 / 1000.0;
@@ -579,8 +582,10 @@ void UBLOX::dispatchMessage()
     case 0x3C:
     { // UBX-NAV-RELPOSNED
       iTOW = (unsigned long)this->unpack_int32(4);
-      relPosN = ((float)this->unpack_int32(8)) / 100.0;
-      relPosE = ((float)this->unpack_int32(12)) / 100.0;
+      relPosN = ((float)(int)this->unpack_int32(8))/100.0;              
+      relPosE = ((float)(int)this->unpack_int32(12))/100.0;
+      //relPosN = ((float)this->unpack_int32(8)) / 100.0;
+      //relPosE = ((float)this->unpack_int32(12)) / 100.0;
       relPosD = ((float)this->unpack_int32(16)) / 100.0;
       solution = (SolType)((this->unpack_int32(60) >> 3) & 3);
       solutionAvail = true;
