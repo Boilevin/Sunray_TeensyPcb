@@ -345,8 +345,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
 //#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
-#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-//#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
+//#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 #define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 #define CPG_CONFIG_FILTER_MINELEV  10   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
@@ -367,7 +367,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define GPS_IMU_FUSION 0.995      // (0-1) weight for IMU heading fusion with GPS heading
 #define IMU_FLOAT_FUSION 0.99    // (0-1) weight for IMU+odometry position fusion with float GPS position
 
-
+#define PERIMETER_OFFFSET 0.5 //
 
 
 

@@ -203,7 +203,7 @@ bool UBLOX::configure()
           setValueSuccess &= configGPS.addCfgValset8(0x201100aa, CPG_CONFIG_FILTER_NCNOTHRS); // CFG-NAVSPG-INFIL_NCNOTHRS (10 C/N0 Threshold #SVs)
           setValueSuccess &= configGPS.addCfgValset8(0x201100ab, CPG_CONFIG_FILTER_CNOTHRS);  // CFG-NAVSPG-INFIL_CNOTHRS  (30 dbHz)
           // bber500
-          setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_NAVSPG_INFIL_MINCNO, CPG_CONFIG_FILTER_MINCNO); // CFG-NAVSPG-INFIL_MINCNO  (30 dbHz)
+          //setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_NAVSPG_INFIL_MINCNO, CPG_CONFIG_FILTER_MINCNO); // CFG-NAVSPG-INFIL_MINCNO  (30 dbHz)
           // bber500
         }
         else
@@ -217,11 +217,13 @@ bool UBLOX::configure()
         setValueSuccess &= configGPS.sendCfgValset16(0x30210002, 1, timeout); // CFG-RATE-NAV  (navigation rate cycles 1)
         // bber500
         //  ----  extras ----------------------------------
+        /*
         setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_SIGNAL_SBAS_ENA, 0);  // SBAS
         setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_NMEA_FILT_SBAS, 0);   // SBAS
         setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_SIGNAL_BDS_ENA, 0);   // Beidou
         setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_NMEA_FILT_BDS, 0);    // Beidou
         setValueSuccess &= configGPS.addCfgValset8(UBLOX_CFG_NAVSPG_DYNMODEL, 11); // Robotic mower dynmodel
+        */
         // bber500
       }
       else if (idx == 2)

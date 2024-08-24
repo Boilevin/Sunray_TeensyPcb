@@ -1865,11 +1865,25 @@ bool Map::findPath(Point &src, Point &dst){
         idx++;
       }
     }
+
+
     // perimeter nodes
+
+    //bber600
+    Polygon tmp;
+    polygonOffset(perimeterPoints, tmp, -PERIMETER_OFFFSET);
+    for (int j=0; j < tmp.numPoints; j++){    
+      pathFinderNodes.nodes[idx].point = &tmp.points[j];
+      idx++;
+    }      
+
+/* old code
     for (int j=0; j < perimeterPoints.numPoints; j++){    
       pathFinderNodes.nodes[idx].point = &perimeterPoints.points[j];
       idx++;
-    }      
+    }  
+*/
+
     // start node
     Node *start = &pathFinderNodes.nodes[idx];
     start->point = &src;
