@@ -14,10 +14,11 @@
 #include "Arduino.h"			
 #include "SkyTraqNmeaParser.h"
 #include "../../gps.h"
-#include "../driver/RobotDriver.h"
+#include "../driver/TeensyRobotDriver.h"
 
 class SKYTRAQ : public SkyTraqNotifyFun, public GpsDriver {
   public:
+    unsigned long solutionTimeout;
     typedef enum {
         GOT_NONE,
         GOT_SYNC1,
@@ -56,7 +57,7 @@ class SKYTRAQ : public SkyTraqNotifyFun, public GpsDriver {
     const GnssData* gdata;
     // Notification of SkyTraqNmeaParser
     U32 gnssUpdateFlag;
-    unsigned long solutionTimeout;
+    
     
     void begin();
     void addchk(int b);

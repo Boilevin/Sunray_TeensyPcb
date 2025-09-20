@@ -28,7 +28,7 @@ void DockOp::begin(){
   bool error = false;
   bool routingFailed = false;      
   
-  motor.setLinearAngularSpeed(0,0);
+  motor.setLinearAngularSpeed(0,0,false);
   motor.setMowState(false);                
 
   if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();

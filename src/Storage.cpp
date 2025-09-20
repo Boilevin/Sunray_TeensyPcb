@@ -4,6 +4,62 @@
 // or Grau GmbH Commercial License for commercial use (http://grauonline.de/cms2/?page_id=153)
 
 
+
+/*
+IA generate this faster part of code using a buffer
+
+
+
+// ...existing code...
+
+File logFile;
+const int LOG_BUFFER_SIZE = 512;
+uint8_t logBuffer[LOG_BUFFER_SIZE];
+int logBufferPos = 0;
+
+void startLogging() {
+  logFile = SD.open("log.bin", FILE_WRITE); // Open once, append mode
+  logBufferPos = 0;
+}
+
+void logData(const void* data, size_t len) {
+  if (logBufferPos + len > LOG_BUFFER_SIZE) {
+    // Buffer full, flush to SD
+    logFile.write(logBuffer, logBufferPos);
+    logBufferPos = 0;
+  }
+  memcpy(&logBuffer[logBufferPos], data, len);
+  logBufferPos += len;
+}
+
+void stopLogging() {
+  if (logBufferPos > 0) {
+    logFile.write(logBuffer, logBufferPos); // Write remaining data
+  }
+  logFile.flush();
+  logFile.close();
+}
+// ...existing code...
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
 #include "Storage.h"
 #include "StateEstimator.h"
 #include "robot.h"
@@ -248,7 +304,6 @@ bool saveState(){
   uint32_t marker = 0x10001003;
   res &= (stateFile.write((uint8_t*)&marker, sizeof(marker)) != 0); 
   res &= (stateFile.write((uint8_t*)&maps.mapCRC, sizeof(maps.mapCRC)) != 0); 
-
   res &= (stateFile.write((uint8_t*)&stateX, sizeof(stateX)) != 0);
   res &= (stateFile.write((uint8_t*)&stateY, sizeof(stateY)) != 0);
   res &= (stateFile.write((uint8_t*)&stateDelta, sizeof(stateDelta)) != 0);

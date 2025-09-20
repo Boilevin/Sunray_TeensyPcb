@@ -1,4 +1,7 @@
 {
     "C_Cpp.dimInactiveRegions": false,
-    "search.useIgnoreFiles": true
+    "search.useIgnoreFiles": true,
+    "files.associations": {
+        "*.tpp": "cpp"
+    }
 }

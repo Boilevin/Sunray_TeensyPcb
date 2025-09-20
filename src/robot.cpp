@@ -728,7 +728,7 @@ void start()
 
   maps.begin();
   // maps.clipperTest();
-  startWIFI();
+  //startWIFI();
 
 #ifdef ENABLE_NTRIP
   ntrip.begin();
@@ -829,7 +829,8 @@ void detectSensorMalfunction()
   }
   if (ENABLE_OVERLOAD_DETECTION)
   {
-    if (motor.motorOverloadDuration > 20000)
+    //bber800
+    if (motor.motorOverloadDuration > 2000) //20000 in the master but too dangerous for driver
     {
       // one motor is taking too much current over a long time (too high gras etc.) and we should stop mowing
       CONSOLE.println("overload!");
@@ -906,7 +907,14 @@ bool detectObstacle()
 
   if ((millis() > linearMotionStartTime + BUMPER_DEADTIME) && (bumper.obstacle()))
   {
-    CONSOLE.println("bumper obstacle!");
+
+    if (bumper.testLeft()) {
+      CONSOLE.println("bumper Left pressed!");
+    }
+    if (bumper.testRight()) {
+      CONSOLE.println("bumper right pressed!");
+    }
+       
     statMowBumperCounter++;
     triggerObstacle();
     return true;
@@ -1053,7 +1061,19 @@ void run()
   if (millis() >= nextSaveTime)
   {
     nextSaveTime = millis() + 25000;
+
+    StartReadAt = millis();
     saveState();
+    EndReadAt = millis();
+    ReadDuration = EndReadAt - StartReadAt;
+    if ( ReadDuration > 30) {
+      CONSOLE.print("Warning SD card read/Write duration > 30 ms : ");
+      CONSOLE.println(ReadDuration);
+      
+    }
+
+
+
   }
 
   // temp

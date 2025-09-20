@@ -370,7 +370,7 @@ void AmMotorDriver::begin(){
   digitalWrite(pinMotorLeftEnable, gearsDriverChip.enableActive);
   pinMode(pinMotorRightEnable, OUTPUT);
   digitalWrite(pinMotorRightEnable, gearsDriverChip.enableActive);
-  #elif
+  #else
   pinMode(pinMotorEnable, OUTPUT);
   digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
   #endif
@@ -380,6 +380,9 @@ void AmMotorDriver::begin(){
   pinMode(pinMotorLeftPWM, OUTPUT);
   pinMode(pinMotorLeftDir, OUTPUT);
 
+  pinMode(pinMotorLeftBrake, OUTPUT);
+  digitalWrite(pinMotorLeftBrake, 0);
+
   analogWriteFrequency(pinMotorLeftPWM, gearsDriverChip.pwmFreq);
   analogWriteFrequency(pinMotorLeftDir, gearsDriverChip.pwmFreq);
  // pinMode(pinMotorLeftSense, INPUT);
@@ -388,6 +391,9 @@ void AmMotorDriver::begin(){
   // right wheel motor
   pinMode(pinMotorRightPWM, OUTPUT);
   pinMode(pinMotorRightDir, OUTPUT);
+
+  pinMode(pinMotorRightBrake, OUTPUT);
+  digitalWrite(pinMotorRightBrake, 0);
   
   analogWriteFrequency(pinMotorRightPWM, gearsDriverChip.pwmFreq);
   analogWriteFrequency(pinMotorRightDir, gearsDriverChip.pwmFreq);
@@ -408,6 +414,10 @@ void AmMotorDriver::begin(){
  // pinMode(pinMotorMowRpm, INPUT_PULLUP);  
   pinMode(pinMotorMowEnable, OUTPUT);
   digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
+
+  pinMode(pinMotorMowBrake, OUTPUT);
+  digitalWrite(pinMotorMowBrake, 1);
+
  // pinMode(pinMotorMowFault, INPUT);
 
   // odometry
@@ -442,8 +452,8 @@ void AmMotorDriver::begin(){
   ChargeIna226.begin(0x40);
   MotRightIna226.begin(0x44);
   CenterMowIna226.begin_I2C1(0x40);  //MOW1 is connect on I2C1
-  LeftMowIna226.begin_I2C1(0x41);  //MOW2 is connect on I2C1
-  RightMowIna226.begin_I2C1(0x44);  //MOW3 is connect on I2C1
+  //LeftMowIna226.begin_I2C1(0x41);  //MOW2 is connect on I2C1
+  //RightMowIna226.begin_I2C1(0x44);  //MOW3 is connect on I2C1
 
   CONSOLE.println ("Checking  ina226 current sensor connection");
   //check sense powerboard i2c connection
@@ -464,14 +474,14 @@ void AmMotorDriver::begin(){
     CONSOLE.println("INA226 MOW1 is not OK");
     powerboard_I2c_line_Ok = false;
   }
-  if ( (!LeftMowIna226.isConnected_I2C1(0x41))) {
+  /* if ( (!LeftMowIna226.isConnected_I2C1(0x41))) {
     CONSOLE.println("INA226 MOW2 is not OK");
     powerboard_I2c_line_Ok = false;
   }
   if ((!RightMowIna226.isConnected_I2C1(0x44))) {
     CONSOLE.println("INA226 MOW3 is not OK");
     powerboard_I2c_line_Ok = false;
-  }
+  } */
 
 
   if (powerboard_I2c_line_Ok)
@@ -485,8 +495,8 @@ void AmMotorDriver::begin(){
     MotRightIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
     //I2C1 bus
     CenterMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    LeftMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    RightMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    //LeftMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    //RightMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
 
     CONSOLE.println ("Ina226 Configure OK ");
     // Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A
@@ -495,8 +505,8 @@ void AmMotorDriver::begin(){
     MotRightIna226.calibrate(0.02, 4);
     //I2C1 bus
     CenterMowIna226.calibrate_I2C1(0.02, 4);
-    LeftMowIna226.calibrate_I2C1(0.02, 4);
-    RightMowIna226.calibrate_I2C1(0.02, 4);
+    //LeftMowIna226.calibrate_I2C1(0.02, 4);
+    //RightMowIna226.calibrate_I2C1(0.02, 4);
 
     CONSOLE.println ("Ina226 Calibration OK ");
   }
@@ -651,18 +661,18 @@ void AmMotorDriver::getMotorFaults(bool &leftFault, bool &rightFault, bool &mowF
   return;
 #else
 
-  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
-  {
-    leftFault = true;
-  }
-  if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
-  {
-    rightFault = true;
-  }
-  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
-  {
-    mowFault = true;
-  }
+  // if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
+  // {
+  //   leftFault = true;
+  // }
+  // if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
+  // {
+  //   rightFault = true;
+  // }
+  // if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
+  // {
+  //   mowFault = true;
+  // }
 
 #endif
 }
@@ -671,30 +681,31 @@ void AmMotorDriver::resetMotorFaults(){
 #ifdef MOTOR_DRIVER_BTS7960
   return;
 #else
-  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
-  {
-    if (gearsDriverChip.resetFaultByToggleEnable)
-    {
-      digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
-      digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
-    }
-  }
-  if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
-  {
-    if (gearsDriverChip.resetFaultByToggleEnable)
-    {
-      digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
-      digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
-    }
-  }
-  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
-  {
-    if (mowDriverChip.resetFaultByToggleEnable)
-    {
-      digitalWrite(pinMotorMowEnable, !mowDriverChip.enableActive);
-      digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
-    }
-  }
+
+  // if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
+  // {
+  //   if (gearsDriverChip.resetFaultByToggleEnable)
+  //   {
+  //     digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
+  //     digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
+  //   }
+  // }
+  // if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
+  // {
+  //   if (gearsDriverChip.resetFaultByToggleEnable)
+  //   {
+  //     digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
+  //     digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
+  //   }
+  // }
+  // if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
+  // {
+  //   if (mowDriverChip.resetFaultByToggleEnable)
+  //   {
+  //     digitalWrite(pinMotorMowEnable, !mowDriverChip.enableActive);
+  //     digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
+  //   }
+  // }
 #endif
 }
 
@@ -704,8 +715,8 @@ void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, flo
       rightCurrent = MotLeftIna226.readShuntCurrent() ;
       leftCurrent = MotRightIna226.readShuntCurrent() ;
       mow1Current = CenterMowIna226.readShuntCurrent_I2C1() ;
-	    mow2Current = LeftMowIna226.readShuntCurrent_I2C1() ;
-	    mow3Current = RightMowIna226.readShuntCurrent_I2C1() ;
+	    mow2Current = 0;//LeftMowIna226.readShuntCurrent_I2C1() ;
+	    mow3Current = 0;//RightMowIna226.readShuntCurrent_I2C1() ;
 
   	  float motorMowCurrent = max(mow1Current, mow2Current); //find the biggest one
 	    mowCurrent = max(motorMowCurrent, mow3Current);	

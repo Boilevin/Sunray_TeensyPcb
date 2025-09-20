@@ -27,7 +27,7 @@ void MowOp::begin(){
 
     CONSOLE.println("OP_MOW");      
     motor.enableTractionMotors(true); // allow traction motors to operate         
-    motor.setLinearAngularSpeed(0,0); 
+    motor.setLinearAngularSpeed(0,0,false); 
     //bber200
     if (((previousOp != &escapeReverseOp) && (previousOp != &escapeForwardOp)) || (DISABLE_MOW_MOTOR_AT_OBSTACLE))  motor.setMowState(false);           
 
@@ -161,7 +161,8 @@ void MowOp::onOdometryError(){
     
 void MowOp::onMotorOverload(){
   if (ENABLE_OVERLOAD_DETECTION){
-    if (motor.motorOverloadDuration > 20000){
+    //bber800
+    if (motor.motorOverloadDuration > 2000){ //20000 in the master but too dangerous for driver
         CONSOLE.println("error: motor overload!");    
         stateSensor = SENS_OVERLOAD;
         changeOp(errorOp);

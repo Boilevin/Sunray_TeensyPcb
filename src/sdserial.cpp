@@ -76,7 +76,7 @@ size_t SDSerial::write(uint8_t data){
       packetBuffer[packetIdx] = '\0';            
       logFile = SD.open(logFileName.c_str(), FILE_WRITE);
       if (logFile){        
-        logFile.write(packetBuffer);              
+        logFile.write(packetBuffer);               
         logFile.flush();
         logFile.close();            
       } else {

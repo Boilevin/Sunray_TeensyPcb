@@ -22,7 +22,7 @@ float stanleyTrackingSlowK = STANLEY_CONTROL_K_SLOW;
 float stanleyTrackingSlowP = STANLEY_CONTROL_P_SLOW;    
 
 float setSpeed = 0.2; // linear speed (m/s)
-float setDockingSpeed = 0.2; // linear speed (m/s)
+float setDockingSpeed = 0.1; // linear speed (m/s)
 Point last_rotation_target;
 bool rotateLeft = false;
 bool rotateRight = false;
@@ -166,7 +166,8 @@ void trackLine(bool runControl){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
     angular = 1.5 * 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
-    if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
+    // decide for one rotation direction (and keep it)
+    if ((!rotateLeft) && (!rotateRight)){ 
       int r = 0;
       // no idea but don't work in reverse mode...
       if (!maps.trackReverse) {
@@ -347,7 +348,7 @@ void trackLine(bool runControl){
   }
    
   if (mow)  {  // wait until mowing motor is running
-    if (millis() < motor.motorMowSpinUpTime + 10000){
+    if (millis() < motor.motorMowSpinUpTime + 3000){
       if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
       linear = 0;
       angular = 0;   
@@ -363,7 +364,7 @@ void trackLine(bool runControl){
         langleToTargetFits = angleToTargetFits;
     }
 
-    motor.setLinearAngularSpeed(linear, angular);      
+    motor.setLinearAngularSpeed(linear, angular,true);      
     if (detectLift()) {
       mow = false; // in any case, turn off mower motor if lifted 
       motor.setMowState(mow);    

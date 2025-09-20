@@ -4,7 +4,8 @@
 enum SolType {
     SOL_INVALID,
     SOL_FLOAT,
-    SOL_FIXED      
+    SOL_FIXED,
+    SOL_UNKNOWN      
 };    
     
 

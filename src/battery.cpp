@@ -42,7 +42,7 @@ void Battery::begin()
 
   batMonitor = true;                  // monitor battery and charge voltage?
   batGoHomeIfBelow = GO_HOME_VOLTAGE; // 21.5  drive home voltage (Volt)
-  batSwitchOffIfBelow = 21;           // switch off battery if below voltage (Volt)
+  batSwitchOffIfBelow = 19;           // switch off battery if below voltage (Volt)
   batSwitchOffIfIdle = 600;           // switch off battery if idle (seconds)
   // The battery will charge if both battery voltage is below that value and charging current is above that value.
   batFullCurrent = BAT_FULL_CURRENT; // 0.2  current flowing when battery is fully charged (A)
@@ -55,7 +55,7 @@ void Battery::begin()
   switchOffByOperator = false;
   switchOffAllowedUndervoltage = BAT_SWITCH_OFF_UNDERVOLTAGE;
   switchOffAllowedIdle = BAT_SWITCH_OFF_IDLE;
-  startChargingIfBelow = 26;
+  startChargingIfBelow = START_CHARGING_VOLTAGE; // start charging if battery voltage is below this value
 
   enableCharging(false);
   resetIdle();
@@ -276,6 +276,8 @@ void Battery::run()
           //chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage) || (batteryVoltageSlopeLowCounter > 5));
           //do not stop charging cycle on teensy PCB use the charger itself to manage battery
           chargingCompleted = ((chargingCurrent <= batFullCurrent) || (batteryVoltage >= batFullVoltage));
+          //chargingCompleted = (batteryVoltage >= batFullVoltage);
+
           
           if (chargingCompleted){
             DEBUG(F("END CHARGING Current= "));

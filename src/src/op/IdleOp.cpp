@@ -14,7 +14,7 @@ String IdleOp::name(){
 
 void IdleOp::begin(){
     CONSOLE.println("OP_IDLE");          
-    motor.setLinearAngularSpeed(0,0);
+    motor.setLinearAngularSpeed(0,0,false);
     motor.setMowState(false);
     maps.setIsDocked(false);
 }

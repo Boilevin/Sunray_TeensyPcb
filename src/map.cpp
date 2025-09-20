@@ -638,6 +638,19 @@ bool Map::save(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Map::finishedUploadingMap(){
   CONSOLE.println("FI,");
   CONSOLE.println("finishedUploadingMap");
@@ -663,7 +676,7 @@ void Map::clearMap(){
  
 // set point
 bool Map::setPoint(int idx, float x, float y){  
-  
+  watchdogReset(); 
   if (idx == 0){   
     clearMap();
   }    
@@ -1037,12 +1050,73 @@ bool Map::startMowing(float stateX, float stateY){
 
 
 void Map::clearObstacles(){  
-  //bber300
  //CONSOLE.println("clearObstacles");
   obstacles.dealloc();  
 }
 
+
 // add dynamic octagon obstacle in front of robot on line going from robot to target point
+//generate by EscapeReverseOp
+// side = 0: in front (default, as before)
+// side = -1: left of trajectory
+// side = 1: right of trajectory
+bool Map::addObstacleSide(float stateX, float stateY, int side){     
+  float d1 = OBSTACLE_DIAMETER / 6.0;   // distance from center to nearest octagon edges
+  float d2 = OBSTACLE_DIAMETER / 2.0;   // distance from center to farthest octagon edges
+
+  float angleCurr = pointsAngle(stateX, stateY, targetPoint.x(), targetPoint.y());
+  float r = d2 + 0.05;
+
+  // Offset angle for left/right placement at 45 degres direction in front of mower
+  if (side == -1) angleCurr += PI / 4;      // left
+  else if (side == 1) angleCurr -= PI / 4;  // right
+
+  float x = stateX + cos(angleCurr) * r;
+  float y = stateY + sin(angleCurr) * r;
+
+  CONSOLE.print("addObstacle ");
+  CONSOLE.print(x);
+  CONSOLE.print(",");
+  CONSOLE.println(y);
+  if (obstacles.numPolygons > 50){
+    CONSOLE.println("error: too many obstacles");
+    return false;
+  }
+  int idx = obstacles.numPolygons;
+  if (!obstacles.alloc(idx+1)) return false;
+  if (!obstacles.polygons[idx].alloc(8)) return false;
+
+  obstacles.polygons[idx].points[0].setXY(x-d2, y-d1);
+  obstacles.polygons[idx].points[1].setXY(x-d1, y-d2);
+  obstacles.polygons[idx].points[2].setXY(x+d1, y-d2);
+  obstacles.polygons[idx].points[3].setXY(x+d2, y-d1);
+  obstacles.polygons[idx].points[4].setXY(x+d2, y+d1);
+  obstacles.polygons[idx].points[5].setXY(x+d1, y+d2);
+  obstacles.polygons[idx].points[6].setXY(x-d1, y+d2);
+  obstacles.polygons[idx].points[7].setXY(x-d2, y+d1);         
+  return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// add dynamic octagon obstacle in front of robot on line going from robot to target point
+//generate by EscapeReverseOp
 bool Map::addObstacle(float stateX, float stateY){     
   float d1 = OBSTACLE_DIAMETER / 6.0;   // distance from center to nearest octagon edges
   float d2 = OBSTACLE_DIAMETER / 2.0;  // distance from center to farest octagon edges
@@ -1865,25 +1939,11 @@ bool Map::findPath(Point &src, Point &dst){
         idx++;
       }
     }
-
-
     // perimeter nodes
-
-    //bber600
-    Polygon tmp;
-    polygonOffset(perimeterPoints, tmp, -PERIMETER_OFFFSET);
-    for (int j=0; j < tmp.numPoints; j++){    
-      pathFinderNodes.nodes[idx].point = &tmp.points[j];
-      idx++;
-    }      
-
-/* old code
     for (int j=0; j < perimeterPoints.numPoints; j++){    
       pathFinderNodes.nodes[idx].point = &perimeterPoints.points[j];
       idx++;
-    }  
-*/
-
+    }   
     // start node
     Node *start = &pathFinderNodes.nodes[idx];
     start->point = &src;

@@ -12,7 +12,7 @@
 
 SKYTRAQ::SKYTRAQ()
 {
-  debug = false;
+  debug = true;
   verbose = false;
   useTCP   = false;
   #ifdef GPS_DUMP
@@ -222,9 +222,9 @@ long SKYTRAQ::unpack(int offset, int size) {
 void SKYTRAQ::run()
 {
 	if (millis() > solutionTimeout){
-    //CONSOLE.println("SYKTRAQ::solutionTimeout");
+    CONSOLE.println("SYKTRAQ::solutionTimeout");
     solution = SOL_INVALID;
-    solutionTimeout = millis() + 1000;
+    solutionTimeout = millis() + 1200;
     solutionAvail = true;
   }
   //CONSOLE.println("SKYTRAQ::run");
@@ -234,14 +234,14 @@ void SKYTRAQ::run()
     else stream = _bus;
 
   if (!stream->available()) return;
-  while (!stream->available()) {		
+  while (stream->available()) {		
     byte data = stream->read();        		
     parser.Encode(data); // NMEA parser
     //parseBinary(data);  // binary parser
 #ifdef GPS_DUMP
-    //if (data == 0xA0) CONSOLE.println("\n");
-    //CONSOLE.print(data, HEX);
-    //CONSOLE.print(",");   
+    if (data == 0xA0) CONSOLE.println("\n");
+   //CONSOLE.print(data, HEX);
+   // CONSOLE.print(",");   
     CONSOLE.print(((char)data)); 
 #endif
   }
@@ -316,8 +316,8 @@ bool SKYTRAQ::processNmea(U32 f, const char* buf, ParsingType type)
       groundSpeed = gnss.GetSpeedInKmHr() / 1000.0 * 60.0 * 60.0; 
       break;
     case SkyTraqNmeaParser::UpdateQualitMode:      
-      //CONSOLE.print("Qualit Mode:");
-      //CONSOLE.println(gnss.GetQualitMode());      
+      CONSOLE.print("Qualit Mode:");
+      CONSOLE.println(gnss.GetQualitMode());      
       switch (gnss.GetQualitMode()){
         case GnssData::QM_FloatRtk:
           solution = SOL_FLOAT;
@@ -374,7 +374,7 @@ bool SKYTRAQ::processNmea(U32 f, const char* buf, ParsingType type)
     case SkyTraqNmeaParser::UpdateRtkAge:
       //CONSOLE.print("RTK Age:");
       //CONSOLE.println(gnss.GetRtkAge());
-      dgpsAge = millis() - gnss.GetRtkAge() * 1000;
+      dgpsAge = millis() ;
       break;
     case SkyTraqNmeaParser::UpdateRtkRatio:
       //CONSOLE.print("RTK Ratio:");
