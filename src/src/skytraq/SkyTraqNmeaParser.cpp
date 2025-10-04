@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h> 
 #include "SkyTraqNmeaParser.h"
+#include "../../config.h"
 
 GnssData::GnssData(void)
 {
@@ -229,6 +230,8 @@ bool GnssData::SetTime(U16 h, U16 m, D64 s)
 
 bool GnssData::SetNmeaLatitude(double lat, char ns)
 {
+  
+
   double tmpLat = 0;  
   int dd = (int)lat / 100;
   tmpLat = dd + (lat - dd * 100) / 60;
@@ -558,6 +561,7 @@ ParsingType SkyTraqNmeaParser::Encode(U08 b)
     buffer[bufferIndex - 2] = 0;
     bufferIndex -= 2;
     parsingType = ParsingMessage();
+    
     EmptyBuffer();
     return parsingType;
   }
@@ -572,6 +576,7 @@ ParsingType SkyTraqNmeaParser::Encode(U08 b)
 
 ParsingType SkyTraqNmeaParser::ParsingMessage()
 {
+ 
   if(bufferIndex < 10 || buffer[0] != '$' || buffer[bufferIndex - 3] != '*')
   {
     return MessageUnknown;
@@ -919,6 +924,7 @@ void SkyTraqNmeaParser::ProcessingGGA(const U08* pt, int len)
   }
 
   char q = GetParamChar(pt, commaPos[5] + 1, commaPos[6] - 1, 0);
+  
   if(gnssData.SetQualityMode(GetGgaQualityMode(q)))
   {
     updateFlag |= UpdateQualitMode;
@@ -1202,6 +1208,7 @@ void SkyTraqNmeaParser::ProcessingGSV(GnssSystem gs, const U08* pt, int len)
 
 void SkyTraqNmeaParser::ProcessingRMC(const U08* pt, int len)
 {
+   
   int hour = GetParamInt(pt, commaPos[0] + 1, commaPos[0] + 2, 0);
   int min = GetParamInt(pt, commaPos[0] + 3, commaPos[0] + 4, 0);
   double sec = GetParamDouble(pt, commaPos[0] + 5, commaPos[1] - 1, 0);
@@ -1212,6 +1219,7 @@ void SkyTraqNmeaParser::ProcessingRMC(const U08* pt, int len)
 
   double latitude = 0, lontitude = 0;
   latitude = GetParamDouble(pt, commaPos[2] + 1, commaPos[3] - 1, 0);
+  
   if(gnssData.SetNmeaLatitude(latitude, GetParamChar(pt, commaPos[3] + 1, commaPos[4] - 1, ' ')))
   {
     updateFlag |= UpdateLatitude;

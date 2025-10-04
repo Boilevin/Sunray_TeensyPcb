@@ -27,7 +27,7 @@ void EscapeReverseOp::end(){
 
 void EscapeReverseOp::run(){
     battery.resetIdle();
-    motor.setLinearAngularSpeed(-0.1,0);
+    motor.setLinearAngularSpeed(-0.1,0,false);
     //bber200 
     //motor.setMowState(false);  
     if (DISABLE_MOW_MOTOR_AT_OBSTACLE)  motor.setMowState(false);                                       
@@ -48,7 +48,29 @@ void EscapeReverseOp::run(){
             changeOp(*nextOp, false);    // continue current operation
         } else {
             CONSOLE.println("continue operation with virtual obstacle");
-            maps.addObstacle(stateX, stateY);              
+            //bber900
+            if (bumper.obstacle()){
+                if (bumper.testLeft()){
+                    maps.addObstacleSide(stateX, stateY,-1); 
+                    CONSOLE.println("add obstacle on left side of mower");
+
+                }
+                if (bumper.testRight()){
+                    maps.addObstacleSide(stateX, stateY,1); 
+                    CONSOLE.println("add obstacle on right side of mower");
+
+                }
+            }
+            else{
+                    maps.addObstacle(stateX, stateY); 
+                    CONSOLE.println("add obstacle in front of mower");     
+            }
+            
+           
+           
+           
+           
+                    
             //Point pt;
             //if (!maps.findObstacleSafeMowPoint(pt)){
             //    changeOp(dockOp); // dock if no more (valid) mowing points

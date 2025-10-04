@@ -62,7 +62,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define DRV_SIM_ROBOT     1   // simulation
 
 //if a raspberry is connected on Usb port
-#define raspberryUse true
+#define raspberryUse false
 
 // ------- Bluetooth4.0/BLE module -----------------------------------
 // see Wiki on how to install the BLE module and configure the jumpers:
@@ -100,9 +100,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //  via 'File->Preferences->Full output during compile') - detailed steps here:  
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_module
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_logging
-#define ENABLE_SD      true                 // enable SD card services (resuming, logging)? (uncomment to activate)
+#define ENABLE_SD      false                 // enable SD card services (resuming, logging)? (uncomment to activate)
 //#define ENABLE_SD_LOG  1                 // enable SD card logging? uncomment to activate (not recommended - WARNING: may slow down system!)
-#define ENABLE_SD_RESUME  true             // enable SD card map load/resume on reset? (uncomment to activate)
+#define ENABLE_SD_RESUME  false             // enable SD card map load/resume on reset? (uncomment to activate)
 
 
 // ------ odometry -----------------------------------
@@ -118,8 +118,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // NOTE: if using non-default Ardumower chassis and your freewheel is at frontside (gear motors at backside), have may have to swap motor cables, 
 // more info here: https://wiki.ardumower.de/index.php?title=Ardumower_Chassis_%27mountain_mod%27)
 #define FREEWHEEL_IS_AT_BACKSIDE   false   // default Ardumower: true   (change to false, if your freewheel is at frontside) - this is used for obstacle avoidance
-#define WHEEL_BASE_CM         42         // wheel-to-wheel distance (cm)        
-#define WHEEL_DIAMETER        245        // wheel diameter (mm)                 
+#define WHEEL_BASE_CM         33         // wheel-to-wheel distance (cm)        
+#define WHEEL_DIAMETER        190        // wheel diameter (mm)                 
 #define MOWER_SIZE            60        // mower / chassis size / length in cm
 
 //#define ENABLE_ODOMETRY_ERROR_DETECTION  true    // use this to detect odometry erros
@@ -136,7 +136,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // #define TICKS_PER_REVOLUTION  696 / 2    // odometry ticks per wheel revolution 
 
 // ...for the older 42mm diameter motor (white connector)  https://wiki.ardumower.de/images/d/d6/Ardumower_chassis_inside_ready.jpg
-#define TICKS_PER_REVOLUTION  1920    // odometry ticks per wheel revolution 
+#define TICKS_PER_REVOLUTION 2100   // odometry ticks per wheel revolution 
 
 // ...for the brushless motor april 2021   https://wiki.ardumower.de/index.php?title=Datei:BLUnit.JPG
 //#define TICKS_PER_REVOLUTION  1300 / 2    // 1194/2  odometry ticks per wheel revolution
@@ -146,34 +146,34 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 // ----- gear motors --------------------------------------------------
 // for brushless motors, study the sections (drivers, adapter, protection etc.) in the Wiki (https://wiki.ardumower.de/index.php?title=DIY_Brushless_Driver_Board)
-//#define MOTOR_DRIVER_BRUSHLESS   1     // uncomment this for new brushless motor drivers
+#define MOTOR_DRIVER_BRUSHLESS   1     // uncomment this for new brushless motor drivers
 //#define MOTOR_DRIVER_BRUSHLESS_MOW_DRV8308  1 // uncomment for brushless DRV8308 driver and mowing motor 
 //#define MOTOR_DRIVER_BRUSHLESS_MOW_A4931  1    // uncomment for brushless A3931 driver and mowing motor
 //#define MOTOR_DRIVER_BRUSHLESS_MOW_BLDC8015A 1  // uncomment for brushless BLDC8015A driver and mowing motor
-//#define MOTOR_DRIVER_BRUSHLESS_MOW_JYQD 1  // uncomment for brushless JYQD driver and mowing motor (https://forum.ardumower.de/threads/jyqd-treiber-und-sunray.24811/)
+#define MOTOR_DRIVER_BRUSHLESS_MOW_JYQD 1  // uncomment for brushless JYQD driver and mowing motor (https://forum.ardumower.de/threads/jyqd-treiber-und-sunray.24811/)
 //#define MOTOR_DRIVER_BRUSHLESS_GEARS_DRV8308  1   // uncomment for brushless DRV8308 driver and gear/traction motors 
 //#define MOTOR_DRIVER_BRUSHLESS_GEARS_A4931  1    // uncomment for brushless A4931 driver and gear/traction motors
 //#define MOTOR_DRIVER_BRUSHLESS_GEARS_BLDC8015A 1   // uncomment for brushless BLDC8015A driver and gear/traction motors
-//#define MOTOR_DRIVER_BRUSHLESS_GEARS_JYQD 1   // uncomment for brushless JYQD driver and gears/traction motor
+#define MOTOR_DRIVER_BRUSHLESS_GEARS_JYQD 1   // uncomment for brushless JYQD driver and gears/traction motor
 //#define MOTOR_DRIVER_MC33926 1 // uncomment for DC motor MC33926
-#define MOTOR_DRIVER_BTS7960 1 // uncomment for DC motor BTS7960 
+//#define MOTOR_DRIVER_BTS7960 1 // uncomment for DC motor BTS7960 
 
 
-#define MOTOR_FAULT_CURRENT 6.0    // gear motors fault current (amps)
-#define MOTOR_OVERLOAD_CURRENT 2    // gear motors overload current (amps)
-#define MOTOR_TOO_LOW_CURRENT 0  // gear motor too low current (amps), set to zero (0) to disable
+#define MOTOR_FAULT_CURRENT 4.0    // gear motors fault current (amps)
+#define MOTOR_OVERLOAD_CURRENT 2.0    // gear motors overload current (amps)
+#define MOTOR_TOO_LOW_CURRENT -3  // gear motor too low current (amps), set to zero (0) to disable
 
 //#define USE_LINEAR_SPEED_RAMP  true      // use a speed ramp for the linear speed
 #define USE_LINEAR_SPEED_RAMP  false      // do not use a speed ramp 
 
 // motor speed control (PID coefficients) - these values are tuned for Ardumower motors
 // general information about PID controllers: https://wiki.ardumower.de/index.php?title=PID_control
-#define MOTOR_PID_KP     2.0    // do not change 2.0 (for non-Ardumower motors or if the motor speed control is too fast you may try: KP=1.0, KI=0, KD=0)
+#define MOTOR_PID_KP     0.40    // do not change 2.0 (for non-Ardumower motors or if the motor speed control is too fast you may try: KP=1.0, KI=0, KD=0)
 #define MOTOR_PID_KI     0.03   // do not change 0.03
 #define MOTOR_PID_KD     0.03   // do not change 0.03
 
-//#define MOTOR_LEFT_SWAP_DIRECTION 1  // uncomment to swap left motor direction
-//#define MOTOR_RIGHT_SWAP_DIRECTION 1  // uncomment to swap right motor direction
+#define MOTOR_LEFT_SWAP_DIRECTION 1  // uncomment to swap left motor direction
+#define MOTOR_RIGHT_SWAP_DIRECTION 1  // uncomment to swap right motor direction
 
 
 // ----- mowing motor -------------------------------------------------
@@ -181,11 +181,11 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // certain time (normally a few seconds) and the mower will try again and set a virtual obstacle after too many tries
 // On the other hand, the overload detection will detect situations the fault signal cannot detect: slightly higher current for a longer time 
 
-#define MAX_MOW_PWM 210  // use this to permanently reduce mowing motor power (255=max)
+#define MAX_MOW_PWM 150  // use this to permanently reduce mowing motor power (255=max)
 
-#define MOW_FAULT_CURRENT 8.0       // mowing motor fault current (amps)
-#define MOW_OVERLOAD_CURRENT 4.0    // mowing motor overload current (amps)
-#define MOW_TOO_LOW_CURRENT 0   // mowing motor too low current (amps), set to zero (0) to disable
+#define MOW_FAULT_CURRENT 4.0       // mowing motor fault current (amps)
+#define MOW_OVERLOAD_CURRENT 3.0    // mowing motor overload current (amps)
+#define MOW_TOO_LOW_CURRENT -3   // mowing motor too low current (amps), set to zero (0) to disable
 // should the direction of mowing motor toggle each start? (yes: true, no: false)
 //#define MOW_TOGGLE_DIR       true // never use with robomow platform mow motor always rotate in the same dir
 #define MOW_TOGGLE_DIR       false
@@ -222,8 +222,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define WIFI_PASS "mypassword"      // choose WiFi network password
 
 // client (app) --->  server (robot)
-#define ENABLE_SERVER true          // must be enabled if robot should act as server (recommended)
-//#define ENABLE_SERVER false           // must be disabled if robot should act as client (requires external relay server)
+//#define ENABLE_SERVER true          // must be enabled if robot should act as server (recommended)
+#define ENABLE_SERVER false           // must be disabled if robot should act as client (requires external relay server)
 
 // a relay server allows to access the robot via the Internet by transferring data from app to robot and vice versa (not available yet, highly experimental)
 // client (app) --->  relay server  <--- client (robot)
@@ -288,7 +288,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // https://wiki.ardumower.de/index.php?title=Bumper_sensor
 // https://wiki.ardumower.de/index.php?title=Free_wheel_sensor
 //#define BUMPER_ENABLE true
-#define BUMPER_ENABLE true
+#define BUMPER_ENABLE false
 #define BUMPER_DEADTIME 1000  // linear motion dead-time (ms) after bumper is allowed to trigger
 #define BUMPER_TRIGGER_DELAY  0 // bumper must be active for (ms) to trigger
 #define BUMPER_MAX_TRIGGER_TIME 30  // if bumpersensor stays permanent triggered mower will stop with bumper error (time in seconds; 0 = disabled)
@@ -304,14 +304,15 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define CURRENT_FACTOR 1.98   // PCB1.4 (non-bridged INA169, max. 2.5A)
 //#define CURRENT_FACTOR 2.941  // PCB1.4 (bridged INA169, max. 5A)
 
-#define GO_HOME_VOLTAGE   23.2  // start going to dock below this voltage
+#define GO_HOME_VOLTAGE   20.2  // start going to dock below this voltage
 // The battery will charge if both battery voltage is below that value and charging current is above that value.
-#define BAT_FULL_VOLTAGE  29.3  // start mowing again at this voltage
-#define BAT_FULL_CURRENT  0.00   // start mowing again below this charging current (amps)
+#define BAT_FULL_VOLTAGE  25.3  // start mowing again at this voltage
+#define BAT_FULL_CURRENT  0.01   // start mowing again below this charging current (amps)
+#define START_CHARGING_VOLTAGE 24.0 // start charging if battery voltage is below this value
 
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#Automatic_battery_switch_off
 #define BAT_SWITCH_OFF_IDLE  true     // switch off if idle (JP8 must be set to autom.)
-#define BAT_SWITCH_OFF_UNDERVOLTAGE  true // switch off if undervoltage (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_UNDERVOLTAGE  false // switch off if undervoltage (JP8 must be set to autom.)
 
 
 // ------ GPS ------------------------------------------
@@ -342,13 +343,13 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // configure ublox f9p with optimal settings (will be stored in f9p RAM only)
 // NOTE: due to a PCB1.3 bug GPS_RX pin is not working and you have to fix this by a wire:
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#PCB1.3_GPS_pin_fix_and_wire_fix   (see 'GPS wire fix')
-#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-//#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
+//#define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
 //#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
 #define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
-#define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
+#define GPS_CONFIG_FILTER   false    // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 #define CPG_CONFIG_FILTER_MINELEV  10   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
 #define CPG_CONFIG_FILTER_NCNOTHRS 10   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
 #define CPG_CONFIG_FILTER_CNOTHRS  30   // 30 dbHz (robust), 13 dbHz (less robust)
@@ -419,9 +420,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define DOCK_RETRY_TOUCH true   // robot will retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 #define DOCK_RETRY_TOUCH false   // robot will not retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 
-#define DOCK_UNDOCK_TRACKSLOW_DISTANCE 3 // set distance (m) from dock for trackslow (speed limit)
+#define DOCK_UNDOCK_TRACKSLOW_DISTANCE 2 // set distance (m) from dock for trackslow (speed limit)
 
-#define UNDOCK_IGNORE_GPS_DISTANCE 2 // set distance (m) from dock to ignore gps while undocking
+#define UNDOCK_IGNORE_GPS_DISTANCE 1 // set distance (m) from dock to ignore gps while undocking
 
 // ---- path tracking -----------------------------------
 
@@ -439,9 +440,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // ----- other options --------------------------------------------
 
 // button control (turns on additional features via the POWER-ON button)
-#define BUTTON_CONTROL true      // additional features activated (press-and-hold button for specific beep count: 
+//#define BUTTON_CONTROL true      // additional features activated (press-and-hold button for specific beep count: 
                                  //  1 beep=stop, 6 beeps=start, 5 beeps=dock, 3 beeps=R/C mode ON/OFF, 9 beeps=shutdown, 12 beeps=WiFi WPS
-//#define BUTTON_CONTROL false   // additional features deactivated
+#define BUTTON_CONTROL false   // additional features deactivated
 
 //#define USE_TEMP_SENSOR true  // only activate if temp sensor (htu21d) connected
 #define USE_TEMP_SENSOR false  
@@ -461,8 +462,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // ------ experimental options  -------------------------
 
 // drive curves smoothly?
-#define SMOOTH_CURVES  true
-//#define SMOOTH_CURVES  false
+//#define SMOOTH_CURVES  true
+#define SMOOTH_CURVES  false
 
 // --------- serial monitor output (CONSOLE) ------------------------
 // which Arduino Due USB port do you want to your for serial monitor output (CONSOLE)?
@@ -541,25 +542,29 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #ifdef __linux__
   // ...
 #elif __IMXRT1062__  //teensy 4
-  #define pinMotorLeftEnable  5 
-  #define pinMotorEnable  5         // EN motors enable
+  #define pinMotorLeftEnable  13 
+  #define pinMotorEnable  13         // EN motors enable
   #define pinMotorLeftPWM 7          // M1_IN1 left motor PWM pin
   #define pinMotorLeftDir 6         // M1_IN2 left motor Dir pin
+  #define pinMotorLeftBrake 5         
+  
   //#define pinMotorLeftSense A1       // M1_FB  left motor current sense
   //#define pinMotorLeftFault 25       // M1_SF  left motor fault
-  #define pinMotorRightEnable  2                                                              
+  #define pinMotorRightEnable  13                                                              
   #define pinMotorRightPWM  4        // M2_IN1 right motor PWM pin
   #define pinMotorRightDir 3        // M2_IN2 right motor Dir pin
   //#define pinMotorRightSense A0      // M2_FB  right motor current sense
   //#define pinMotorRightFault 27      // M2_SF  right motor fault
+  #define pinMotorRightBrake 2         
 
  
   #define pinMotorMowPWM 10           // M1_IN1 mower motor PWM pin (if using MOSFET, use this pin)
   #define pinMotorMowDir 9          // M1_IN2 mower motor Dir pin (if using MOSFET, keep unconnected)
  // #define pinMotorMowSense A3        // M1_FB  mower motor current sense  
  // #define pinMotorMowFault 26        // M1_SF  mower motor fault   (if using MOSFET/L298N, keep unconnected)
-  #define pinMotorMowEnable 8       // EN mower motor enable      (if using MOSFET/L298N, keep unconnected)
+  #define pinMotorMowEnable 13       // EN mower motor enable      (if using MOSFET/L298N, keep unconnected)
  // #define pinMotorMowRpm A11
+  #define pinMotorMowBrake 8        
       
  // #define pinFreeWheel 8             // front/rear free wheel sensor    
   #define pinBumperLeft 35           // bumper pins

@@ -152,6 +152,8 @@ class INA226
   private:
 
     int8_t inaAddress;
+    int8_t ina1Address;
+
     float currentLSB, powerLSB;
     float vShuntMax, vBusMax, rShunt;
 

@@ -37,7 +37,7 @@ bool INA226::begin(uint8_t address)
 bool INA226::begin_I2C1(uint8_t address)
 {
     Wire1.begin();
-    inaAddress = address;
+    ina1Address = address;
     return true;
 }
 
@@ -394,7 +394,7 @@ int16_t INA226::readRegister16_I2C1(uint8_t reg)
 {
     int16_t value;
 
-    Wire1.beginTransmission(inaAddress);
+    Wire1.beginTransmission(ina1Address);
     #if ARDUINO >= 100
         Wire1.write(reg);
     #else
@@ -404,8 +404,8 @@ int16_t INA226::readRegister16_I2C1(uint8_t reg)
 
     delay(1);
 
-    Wire1.beginTransmission(inaAddress);
-    Wire1.requestFrom(inaAddress, 2);
+    Wire1.beginTransmission(ina1Address);
+    Wire1.requestFrom(ina1Address, 2);
     while(!Wire1.available()) {};
     #if ARDUINO >= 100
         uint8_t vha = Wire1.read();
@@ -444,7 +444,7 @@ void INA226::writeRegister16_I2C1(uint8_t reg, uint16_t val)
     vla = (uint8_t)val;
     val >>= 8;
 
-    Wire1.beginTransmission(inaAddress);
+    Wire1.beginTransmission(ina1Address);
     #if ARDUINO >= 100
         Wire1.write(reg);
         Wire1.write((uint8_t)val);

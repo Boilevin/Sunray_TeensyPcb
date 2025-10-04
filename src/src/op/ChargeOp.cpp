@@ -41,11 +41,11 @@ void ChargeOp::run(){
         if (millis() > retryTouchDockSpeedTime){                            
             retryTouchDockSpeedTime = millis() + 1000;
             motor.enableTractionMotors(true); // allow traction motors to operate                               
-            motor.setLinearAngularSpeed(0.05, 0);
+            motor.setLinearAngularSpeed(0.05, 0,false);
         }
         if (retryTouchDock){
             if (millis() > retryTouchDockStopTime) {
-                motor.setLinearAngularSpeed(0, 0);
+                motor.setLinearAngularSpeed(0, 0,false);
                 retryTouchDock = false;
                 CONSOLE.println("ChargeOp: retryTouchDock failed");
                 motor.enableTractionMotors(true); // allow traction motors to operate                               
@@ -55,7 +55,7 @@ void ChargeOp::run(){
         } else if (betterTouchDock){
             if (millis() > betterTouchDockStopTime) {
                 CONSOLE.println("ChargeOp: betterTouchDock completed");
-                motor.setLinearAngularSpeed(0, 0);            
+                motor.setLinearAngularSpeed(0, 0,false);            
                 betterTouchDock = false;
             }        
         }
@@ -128,7 +128,7 @@ void ChargeOp::onBadChargingContactDetected(){
 void ChargeOp::onChargerConnected(){
     if (retryTouchDock){
         CONSOLE.println("ChargeOp: retryTouchDock succeeded");        
-        motor.setLinearAngularSpeed(0, 0);
+        motor.setLinearAngularSpeed(0, 0,false);
         retryTouchDock = false;
     }
 }

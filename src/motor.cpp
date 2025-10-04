@@ -455,7 +455,8 @@ void Motor::checkOverload(){
       CONSOLE.print(",");
       CONSOLE.println(motorMowSenseLP);
     }
-    motorOverloadDuration += 20;     
+    //bber800
+    motorOverloadDuration += 100;     //20 in master but loop is now execute only each 100 ms
   } else {
     motorOverloadDuration = 0;
   }
@@ -486,10 +487,14 @@ bool Motor::checkMowRpmFault(){
 
 // measure motor currents
 void Motor::sense(){
+  //return;
   if (millis() < nextSenseTime) return;
-  nextSenseTime = millis() + 100;  //20 ms on 
+  //bber800
+  nextSenseTime = millis() + 100;  //20 ms on master and too fast for ina226
   motorDriver.getMotorCurrent(motorLeftSense, motorRightSense, motorMowSense, motorMow1Sense, motorMow2Sense, motorMow3Sense);
-  float lp = 0.90; // need lower filter on ina226 : already done by chip
+  float lp = 0.50; // need lower filter on ina226 : already done by chip
+  
+     
   motorRightSenseLP = lp * motorRightSenseLP + (1.0-lp) * motorRightSense;
   motorLeftSenseLP = lp * motorLeftSenseLP + (1.0-lp) * motorLeftSense;
 //bber
@@ -501,9 +506,11 @@ void Motor::sense(){
   
 
   motorsSenseLP = motorRightSenseLP + motorLeftSenseLP + motorMowSenseLP;
+
+  
   motorRightPWMCurrLP = lp * motorRightPWMCurrLP + (1.0-lp) * ((float)motorRightPWMCurr);
   motorLeftPWMCurrLP = lp * motorLeftPWMCurrLP + (1.0-lp) * ((float)motorLeftPWMCurr);
-  lp = 0.90;// need lower filter on ina226 : already done by chip
+  lp = 0.90;
   motorMowPWMCurrLP = lp * motorMowPWMCurrLP + (1.0-lp) * ((float)motorMowPWMCurr); 
  
   // compute normalized current (normalized to 1g gravity)
@@ -641,8 +648,8 @@ void Motor::test(){
   motorRightTicks = 0;  
   unsigned long nextInfoTime = 0;
   int seconds = 0;
-  int pwmLeft = 200;
-  int pwmRight = 200; 
+  int pwmLeft = 50;
+  int pwmRight = 50; 
 
   bool slowdown = true;
   long stopTicks = ticksPerRevolution * 10;
@@ -651,7 +658,7 @@ void Motor::test(){
     if (millis() > nextControlTime){
       nextControlTime = millis() + 20;
       if ((slowdown) && ((motorLeftTicks + ticksPerRevolution  > stopTicks)||(motorRightTicks + ticksPerRevolution > stopTicks))){  //Letzte halbe drehung verlangsamen
-        pwmLeft = pwmRight = 20;
+        pwmLeft = pwmRight = 30;
         slowdown = false;
       }    
       if (millis() > nextInfoTime){      

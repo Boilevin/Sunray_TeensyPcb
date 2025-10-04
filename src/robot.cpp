@@ -620,12 +620,12 @@ void start()
   buzzerDriver.begin();
   buzzer.begin();
 
-  Wire.begin();
+  //Wire.begin();
 
   analogReadResolution(12); // configure ADC 12 bit resolution
   // unsigned long timeout = millis() + 2000;
 
-#ifndef __IMXRT1062__ // teensy
+#ifndef __IMXRT1062__ // not teensy 
 
   while (millis() < timeout)
   {
@@ -636,6 +636,7 @@ void start()
       Wire.begin();
 #ifdef I2C_SPEED
       Wire.setClock(I2C_SPEED);
+      Wire1.setClock(I2C_SPEED);
 #endif
     }
     else
@@ -646,25 +647,26 @@ void start()
 // give Arduino IDE users some time to open serial console to actually see very first console messages
 #ifndef __linux__
   delay(1500);
+  CONSOLE.println(F("Wait to see serial console outpu "));
 #endif
 
 #if defined(ENABLE_SD)
-#ifdef __linux__
+  #ifdef __linux__
   bool res = SD.begin();
-#elif __IMXRT1062__ // teensy 4
-  const int chipSelect = BUILTIN_SDCARD;
-  bool res = SD.begin(chipSelect);
-#else
-  bool res = SD.begin(SDCARD_SS_PIN);
-#endif
-  if (res)
-  {
-    CONSOLE.println("SD card found!");
-#if defined(ENABLE_SD_LOG)
-    sdSerial.beginSD();
-#endif
+    #elif __IMXRT1062__ // teensy 4
+    const int chipSelect = BUILTIN_SDCARD;
+    bool res = SD.begin(chipSelect);
+    #else
+    bool res = SD.begin(SDCARD_SS_PIN);
+    #endif
+    if (res)
+    {
+      CONSOLE.println("SD card found!");
+    #if defined(ENABLE_SD_LOG)
+      sdSerial.beginSD();
+  #endif
   }
-  else
+  #else
   {
     CONSOLE.println("no SD card found");
   }
@@ -721,14 +723,13 @@ void start()
 
 #ifdef GPS_USE_TCP
   gps.begin(gpsClient, GPS_HOST, GPS_PORT);
-
 #else
   gps.begin(GPS, GPS_BAUDRATE);
 #endif
 
   maps.begin();
   // maps.clipperTest();
-  startWIFI();
+  //startWIFI();
 
 #ifdef ENABLE_NTRIP
   ntrip.begin();
@@ -829,7 +830,8 @@ void detectSensorMalfunction()
   }
   if (ENABLE_OVERLOAD_DETECTION)
   {
-    if (motor.motorOverloadDuration > 20000)
+    //bber800
+    if (motor.motorOverloadDuration > 2000) //20000 in the master but too dangerous for driver
     {
       // one motor is taking too much current over a long time (too high gras etc.) and we should stop mowing
       CONSOLE.println("overload!");
@@ -906,7 +908,14 @@ bool detectObstacle()
 
   if ((millis() > linearMotionStartTime + BUMPER_DEADTIME) && (bumper.obstacle()))
   {
-    CONSOLE.println("bumper obstacle!");
+
+    if (bumper.testLeft()) {
+      CONSOLE.println("bumper Left pressed!");
+    }
+    if (bumper.testRight()) {
+      CONSOLE.println("bumper right pressed!");
+    }
+       
     statMowBumperCounter++;
     triggerObstacle();
     return true;
@@ -1028,8 +1037,9 @@ void run()
   buzzer.run();
   buzzerDriver.run();
   stopButton.run();
-  battery.run();
   batteryDriver.run();
+  battery.run();
+  
   motorDriver.run();
   rainDriver.run();
   liftDriver.run();
@@ -1053,7 +1063,19 @@ void run()
   if (millis() >= nextSaveTime)
   {
     nextSaveTime = millis() + 25000;
+
+    StartReadAt = millis();
     saveState();
+    EndReadAt = millis();
+    ReadDuration = EndReadAt - StartReadAt;
+    if ( ReadDuration > 30) {
+      CONSOLE.print("Warning SD card read/Write duration > 30 ms : ");
+      CONSOLE.println(ReadDuration);
+      
+    }
+
+
+
   }
 
   // temp

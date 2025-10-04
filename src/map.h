@@ -214,6 +214,8 @@ class Map
     
     // -----virtual obstacles----------------------------------
     bool addObstacle(float stateX, float stateY);    
+    bool addObstacleSide(float stateX, float stateY,int side);    
+    
     void clearObstacles();
     
     // -----misc-----------------------------------------------

@@ -60,8 +60,7 @@ volatile boolean tone_pin_state = false;
   INA226 MotRightIna226;
 
 	INA226 CenterMowIna226;
-	INA226 LeftMowIna226;
-	INA226 RightMowIna226;
+	
 
 	float shuntvoltagec = 0;
 	float shuntvoltagel = 0;
@@ -70,11 +69,9 @@ volatile boolean tone_pin_state = false;
 	unsigned long lastTimeMotorMowStuck;
 	int motorMowSenseCounter ;
 	float Center_Mow_Power;
-	float Left_Mow_Power;
-	float Right_Mow_Power;
+	
 	float Center_Mow_Current;
-	float Left_Mow_Current;
-	float Right_Mow_Current;
+	
 	float Ina226_Bus_Voltage;
   boolean powerboard_I2c_line_Ok;
 	//float motorMowPowerOverload=1.0; //Frei 15W, Bis 30W ok, 75W NotAus 30W - 50W auf 1.0 - 0.5 in diese Variable zur Speedreduzierung linear beim MÃ¤hen
@@ -370,7 +367,7 @@ void AmMotorDriver::begin(){
   digitalWrite(pinMotorLeftEnable, gearsDriverChip.enableActive);
   pinMode(pinMotorRightEnable, OUTPUT);
   digitalWrite(pinMotorRightEnable, gearsDriverChip.enableActive);
-  #elif
+  #else
   pinMode(pinMotorEnable, OUTPUT);
   digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
   #endif
@@ -380,6 +377,9 @@ void AmMotorDriver::begin(){
   pinMode(pinMotorLeftPWM, OUTPUT);
   pinMode(pinMotorLeftDir, OUTPUT);
 
+  pinMode(pinMotorLeftBrake, OUTPUT);
+  digitalWrite(pinMotorLeftBrake, 0);
+
   analogWriteFrequency(pinMotorLeftPWM, gearsDriverChip.pwmFreq);
   analogWriteFrequency(pinMotorLeftDir, gearsDriverChip.pwmFreq);
  // pinMode(pinMotorLeftSense, INPUT);
@@ -388,6 +388,9 @@ void AmMotorDriver::begin(){
   // right wheel motor
   pinMode(pinMotorRightPWM, OUTPUT);
   pinMode(pinMotorRightDir, OUTPUT);
+
+  pinMode(pinMotorRightBrake, OUTPUT);
+  digitalWrite(pinMotorRightBrake, 0);
   
   analogWriteFrequency(pinMotorRightPWM, gearsDriverChip.pwmFreq);
   analogWriteFrequency(pinMotorRightDir, gearsDriverChip.pwmFreq);
@@ -408,6 +411,10 @@ void AmMotorDriver::begin(){
  // pinMode(pinMotorMowRpm, INPUT_PULLUP);  
   pinMode(pinMotorMowEnable, OUTPUT);
   digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
+
+  pinMode(pinMotorMowBrake, OUTPUT);
+  digitalWrite(pinMotorMowBrake, 1);
+
  // pinMode(pinMotorMowFault, INPUT);
 
   // odometry
@@ -435,44 +442,35 @@ void AmMotorDriver::begin(){
   
   leftSpeedSign = rightSpeedSign = mowSpeedSign = 1;
   lastRightPwm = lastLeftPwm = lastMowPwm = 0;
-
+delay(4000); //bber1 wait for power to stabilize
   CONSOLE.println ("Starting Ina226 current sensor ");
   //remember 2 i2c line with 3 ina226 on them ,soit same i2c adress 2 time
-  MotLeftIna226.begin(0x41);
-  ChargeIna226.begin(0x40);
-  MotRightIna226.begin(0x44);
-  CenterMowIna226.begin_I2C1(0x40);  //MOW1 is connect on I2C1
-  LeftMowIna226.begin_I2C1(0x41);  //MOW2 is connect on I2C1
-  RightMowIna226.begin_I2C1(0x44);  //MOW3 is connect on I2C1
+  MotLeftIna226.begin_I2C1(0x41);
+  ChargeIna226.begin_I2C1(0x40);
+  MotRightIna226.begin_I2C1(0x44);
+  CenterMowIna226.begin_I2C1(0x45);  //MOW1 is connect on I2C1
+  
 
   CONSOLE.println ("Checking  ina226 current sensor connection");
   //check sense powerboard i2c connection
   powerboard_I2c_line_Ok = true;
-  if (!ChargeIna226.isConnected(0x40)) {
+  if (!ChargeIna226.isConnected_I2C1(0x40)) {
     CONSOLE.println("INA226 Battery Charge is not OK");
     powerboard_I2c_line_Ok = false;
   }
-  if (!MotRightIna226.isConnected(0x44)) {
+  if (!MotRightIna226.isConnected_I2C1(0x44)) {
     CONSOLE.println("INA226 Motor Right is not OK");
     powerboard_I2c_line_Ok = false;
   }
-  if (!MotLeftIna226.isConnected(0x41)) {
+  if (!MotLeftIna226.isConnected_I2C1(0x41)) {
     CONSOLE.println("INA226 Motor Left is not OK");
     powerboard_I2c_line_Ok = false;
   }
-  if (!CenterMowIna226.isConnected_I2C1(0x40)) {
+  if (!CenterMowIna226.isConnected_I2C1(0x45)) {
     CONSOLE.println("INA226 MOW1 is not OK");
     powerboard_I2c_line_Ok = false;
   }
-  if ( (!LeftMowIna226.isConnected_I2C1(0x41))) {
-    CONSOLE.println("INA226 MOW2 is not OK");
-    powerboard_I2c_line_Ok = false;
-  }
-  if ((!RightMowIna226.isConnected_I2C1(0x44))) {
-    CONSOLE.println("INA226 MOW3 is not OK");
-    powerboard_I2c_line_Ok = false;
-  }
-
+  
 
   if (powerboard_I2c_line_Ok)
   {
@@ -480,25 +478,34 @@ void AmMotorDriver::begin(){
     // Configure INA226
 
 
-    ChargeIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    MotLeftIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    MotRightIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    ChargeIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    MotLeftIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    MotRightIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
     //I2C1 bus
     CenterMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    LeftMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-    RightMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    //LeftMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
+    //RightMowIna226.configure_I2C1(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
 
     CONSOLE.println ("Ina226 Configure OK ");
     // Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A
-    ChargeIna226.calibrate(0.02, 4);
-    MotLeftIna226.calibrate(0.02, 4);
-    MotRightIna226.calibrate(0.02, 4);
+    ChargeIna226.calibrate_I2C1(0.02, 4);
+    MotLeftIna226.calibrate_I2C1(0.02, 4);
+    MotRightIna226.calibrate_I2C1(0.02, 4);
     //I2C1 bus
     CenterMowIna226.calibrate_I2C1(0.02, 4);
-    LeftMowIna226.calibrate_I2C1(0.02, 4);
-    RightMowIna226.calibrate_I2C1(0.02, 4);
+    //LeftMowIna226.calibrate_I2C1(0.02, 4);
+    //RightMowIna226.calibrate_I2C1(0.02, 4);
 
     CONSOLE.println ("Ina226 Calibration OK ");
+
+    // CONSOLE.println("try to read bat voltage"); 
+    // float batvolt = MotRightIna226.readBusVoltage_I2C1() ;
+    // CONSOLE.println ("BAT VOLTAGE : " + String(batvolt) + " V");
+    
+    // CONSOLE.println("try to read chg voltage");
+    // float chgvolt = ChargeIna226.readBusVoltage_I2C1() ;
+    // CONSOLE.println ("CHG VOLTAGE : " + String(chgvolt) + " V");
+
   }
   else
   {
@@ -651,18 +658,18 @@ void AmMotorDriver::getMotorFaults(bool &leftFault, bool &rightFault, bool &mowF
   return;
 #else
 
-  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
-  {
-    leftFault = true;
-  }
-  if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
-  {
-    rightFault = true;
-  }
-  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
-  {
-    mowFault = true;
-  }
+  // if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
+  // {
+  //   leftFault = true;
+  // }
+  // if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
+  // {
+  //   rightFault = true;
+  // }
+  // if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
+  // {
+  //   mowFault = true;
+  // }
 
 #endif
 }
@@ -671,44 +678,41 @@ void AmMotorDriver::resetMotorFaults(){
 #ifdef MOTOR_DRIVER_BTS7960
   return;
 #else
-  if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
-  {
-    if (gearsDriverChip.resetFaultByToggleEnable)
-    {
-      digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
-      digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
-    }
-  }
-  if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
-  {
-    if (gearsDriverChip.resetFaultByToggleEnable)
-    {
-      digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
-      digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
-    }
-  }
-  if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
-  {
-    if (mowDriverChip.resetFaultByToggleEnable)
-    {
-      digitalWrite(pinMotorMowEnable, !mowDriverChip.enableActive);
-      digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
-    }
-  }
+
+  // if (digitalRead(pinMotorLeftFault) == gearsDriverChip.faultActive)
+  // {
+  //   if (gearsDriverChip.resetFaultByToggleEnable)
+  //   {
+  //     digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
+  //     digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
+  //   }
+  // }
+  // if (digitalRead(pinMotorRightFault) == gearsDriverChip.faultActive)
+  // {
+  //   if (gearsDriverChip.resetFaultByToggleEnable)
+  //   {
+  //     digitalWrite(pinMotorEnable, !gearsDriverChip.enableActive);
+  //     digitalWrite(pinMotorEnable, gearsDriverChip.enableActive);
+  //   }
+  // }
+  // if (digitalRead(pinMotorMowFault) == mowDriverChip.faultActive)
+  // {
+  //   if (mowDriverChip.resetFaultByToggleEnable)
+  //   {
+  //     digitalWrite(pinMotorMowEnable, !mowDriverChip.enableActive);
+  //     digitalWrite(pinMotorMowEnable, mowDriverChip.enableActive);
+  //   }
+  // }
 #endif
 }
 
 void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){
       if (!powerboard_I2c_line_Ok) return;
       //bber
-      rightCurrent = MotLeftIna226.readShuntCurrent() ;
-      leftCurrent = MotRightIna226.readShuntCurrent() ;
-      mow1Current = CenterMowIna226.readShuntCurrent_I2C1() ;
-	    mow2Current = LeftMowIna226.readShuntCurrent_I2C1() ;
-	    mow3Current = RightMowIna226.readShuntCurrent_I2C1() ;
-
-  	  float motorMowCurrent = max(mow1Current, mow2Current); //find the biggest one
-	    mowCurrent = max(motorMowCurrent, mow3Current);	
+      rightCurrent = MotLeftIna226.readShuntCurrent_I2C1() ;
+      leftCurrent = MotRightIna226.readShuntCurrent_I2C1() ;
+      mowCurrent = CenterMowIna226.readShuntCurrent_I2C1() ;
+	    
       /*
   CONSOLE.print("Left :");
   CONSOLE.print(leftCurrent);
@@ -778,22 +782,6 @@ void AmBatteryDriver::begin(){
   myHumidity.begin();  
 //bber1 
 	
-		CONSOLE.println ("Starting all the Ina226 current mow motor ");
-		CenterMowIna226.begin(0x41);
-		LeftMowIna226.begin(0x40);
-		RightMowIna226.begin(0x44);
-
-		// Configure INA226
-		CenterMowIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-		LeftMowIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-		RightMowIna226.configure(INA226_AVERAGES_4, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-
-		// Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A
-		CenterMowIna226.calibrate(0.01, 4);
-		LeftMowIna226.calibrate(0.01, 4);
-		RightMowIna226.calibrate(0.01, 4);
-  
-
 
 }
 
@@ -809,7 +797,9 @@ float AmBatteryDriver::getBatteryVoltage(){
     return voltage;
   } 
   float D5VoltageDrop=0.8; // drop voltage on diode
-  float batvolt = MotRightIna226.readBusVoltage() ;
+  float batvolt = MotRightIna226.readBusVoltage_I2C1() ;
+ 
+
   batvolt = batvolt + D5VoltageDrop;
   double accel = 0.05;  //filter percent
   if (abs(voltage - batvolt) > 8)   voltage = batvolt; else voltage = (1.0 - accel) * voltage + accel * batvolt;
@@ -823,7 +813,9 @@ float AmBatteryDriver::getChargeVoltage(){
     voltage = 0;
     return voltage;
   }
-  float chgvolt = ChargeIna226.readBusVoltage() ;
+  
+  float chgvolt =ChargeIna226.readBusVoltage_I2C1() ;
+  
   double accel = 0.05;  //filter percent
   if (abs(voltage - chgvolt) > 8)   voltage = chgvolt; else voltage = (1.0 - accel) * voltage + accel * chgvolt;
   return voltage;
@@ -837,7 +829,7 @@ float AmBatteryDriver::getChargeCurrent(){
       return amps;
     }
     
-    float curramp = ChargeIna226.readBusPower(); //  ?? sense don't work so read power and divise by voltage
+    float curramp = ChargeIna226.readBusPower_I2C1(); //  ?? sense don't work so read power and divise by voltage
     if (getChargeVoltage() != 0) {
       curramp = curramp / getChargeVoltage();
     }
