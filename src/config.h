@@ -100,9 +100,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //  via 'File->Preferences->Full output during compile') - detailed steps here:  
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_module
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#SD_card_logging
-#define ENABLE_SD      false                 // enable SD card services (resuming, logging)? (uncomment to activate)
+#define ENABLE_SD      true                 // enable SD card services (resuming, logging)? (uncomment to activate)
 //#define ENABLE_SD_LOG  1                 // enable SD card logging? uncomment to activate (not recommended - WARNING: may slow down system!)
-#define ENABLE_SD_RESUME  false             // enable SD card map load/resume on reset? (uncomment to activate)
+#define ENABLE_SD_RESUME  true             // enable SD card map load/resume on reset? (uncomment to activate)
 
 
 // ------ odometry -----------------------------------
@@ -304,15 +304,15 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define CURRENT_FACTOR 1.98   // PCB1.4 (non-bridged INA169, max. 2.5A)
 //#define CURRENT_FACTOR 2.941  // PCB1.4 (bridged INA169, max. 5A)
 
-#define GO_HOME_VOLTAGE   20.2  // start going to dock below this voltage
+#define GO_HOME_VOLTAGE   22.0  // start going to dock below this voltage
 // The battery will charge if both battery voltage is below that value and charging current is above that value.
-#define BAT_FULL_VOLTAGE  25.3  // start mowing again at this voltage
+#define BAT_FULL_VOLTAGE  29.4  // start mowing again at this voltage
 #define BAT_FULL_CURRENT  0.01   // start mowing again below this charging current (amps)
-#define START_CHARGING_VOLTAGE 24.0 // start charging if battery voltage is below this value
+#define START_CHARGING_VOLTAGE 26.0 // start charging if battery voltage is below this value
 
 // https://wiki.ardumower.de/index.php?title=Ardumower_Sunray#Automatic_battery_switch_off
 #define BAT_SWITCH_OFF_IDLE  true     // switch off if idle (JP8 must be set to autom.)
-#define BAT_SWITCH_OFF_UNDERVOLTAGE  false // switch off if undervoltage (JP8 must be set to autom.)
+#define BAT_SWITCH_OFF_UNDERVOLTAGE  true // switch off if undervoltage (JP8 must be set to autom.)
 
 
 // ------ GPS ------------------------------------------
@@ -394,7 +394,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 #define OBSTACLE_AVOIDANCE true   // try to find a way around obstacle
 //#define OBSTACLE_AVOIDANCE false  // stop robot on obstacle
-#define OBSTACLE_DIAMETER 1.8   // choose diameter of obstacles placed in front of robot (m) for obstacle avoidance
+#define OBSTACLE_DIAMETER 0.8   // choose diameter of obstacles placed in front of robot (m) for obstacle avoidance
 
 #define DISABLE_MOW_MOTOR_AT_OBSTACLE false // switch off mow motor while escape at detected obstacle; set false if mow motor shall not be stopped at detected obstacles
 
@@ -411,8 +411,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define DOCKING_STATION true   // use this if docking station available and mower should dock automatically
 //#define DOCKING_STATION false    // mower will just stop after mowing instead of docking automatically 
 
-#define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
-//#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
+//#define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
+#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
 
 //#define DOCK_AUTO_START true     // robot will automatically continue mowing after docked automatically
 #define DOCK_AUTO_START false      // robot will not automatically continue mowing after docked automatically
@@ -427,7 +427,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // ---- path tracking -----------------------------------
 
 // below this robot-to-target distance (m) a target is considered as reached
-#define TARGET_REACHED_TOLERANCE 0.10
+#define TARGET_REACHED_TOLERANCE 0.1
 
 // stanley control for path tracking - determines gain how fast to correct for lateral path errors
 #define STANLEY_CONTROL_P_NORMAL  1.3   // 3.0 for path tracking control (angular gain) when mowing
