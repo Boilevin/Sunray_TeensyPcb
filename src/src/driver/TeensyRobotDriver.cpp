@@ -445,20 +445,11 @@ void AmMotorDriver::begin(){
 delay(4000); //bber1 wait for power to stabilize
   CONSOLE.println ("Starting Ina226 current sensor ");
   //remember 2 i2c line with 3 ina226 on them ,soit same i2c adress 2 time
-<<<<<<< HEAD
   MotLeftIna226.begin_I2C1(0x41);
   ChargeIna226.begin_I2C1(0x40);
   MotRightIna226.begin_I2C1(0x44);
   CenterMowIna226.begin_I2C1(0x45);  //MOW1 is connect on I2C1
   
-=======
-  MotLeftIna226.begin(0x41);
-  ChargeIna226.begin(0x40);
-  MotRightIna226.begin(0x44);
-  CenterMowIna226.begin_I2C1(0x40);  //MOW1 is connect on I2C1
-  //LeftMowIna226.begin_I2C1(0x41);  //MOW2 is connect on I2C1
-  //RightMowIna226.begin_I2C1(0x44);  //MOW3 is connect on I2C1
->>>>>>> cb1667839a1022d56a4a998741f07106201b5d41
 
   CONSOLE.println ("Checking  ina226 current sensor connection");
   //check sense powerboard i2c connection
@@ -479,19 +470,7 @@ delay(4000); //bber1 wait for power to stabilize
     CONSOLE.println("INA226 MOW1 is not OK");
     powerboard_I2c_line_Ok = false;
   }
-<<<<<<< HEAD
   
-=======
-  /* if ( (!LeftMowIna226.isConnected_I2C1(0x41))) {
-    CONSOLE.println("INA226 MOW2 is not OK");
-    powerboard_I2c_line_Ok = false;
-  }
-  if ((!RightMowIna226.isConnected_I2C1(0x44))) {
-    CONSOLE.println("INA226 MOW3 is not OK");
-    powerboard_I2c_line_Ok = false;
-  } */
-
->>>>>>> cb1667839a1022d56a4a998741f07106201b5d41
 
   if (powerboard_I2c_line_Ok)
   {
@@ -730,21 +709,10 @@ void AmMotorDriver::resetMotorFaults(){
 void AmMotorDriver::getMotorCurrent(float &leftCurrent, float &rightCurrent, float &mowCurrent, float &mow1Current, float &mow2Current, float &mow3Current){
       if (!powerboard_I2c_line_Ok) return;
       //bber
-<<<<<<< HEAD
       rightCurrent = MotLeftIna226.readShuntCurrent_I2C1() ;
       leftCurrent = MotRightIna226.readShuntCurrent_I2C1() ;
       mowCurrent = CenterMowIna226.readShuntCurrent_I2C1() ;
 	    
-=======
-      rightCurrent = MotLeftIna226.readShuntCurrent() ;
-      leftCurrent = MotRightIna226.readShuntCurrent() ;
-      mow1Current = CenterMowIna226.readShuntCurrent_I2C1() ;
-	    mow2Current = 0;//LeftMowIna226.readShuntCurrent_I2C1() ;
-	    mow3Current = 0;//RightMowIna226.readShuntCurrent_I2C1() ;
-
-  	  float motorMowCurrent = max(mow1Current, mow2Current); //find the biggest one
-	    mowCurrent = max(motorMowCurrent, mow3Current);	
->>>>>>> cb1667839a1022d56a4a998741f07106201b5d41
       /*
   CONSOLE.print("Left :");
   CONSOLE.print(leftCurrent);
