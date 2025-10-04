@@ -327,7 +327,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 // change:     #define SERIAL_BUFFER_SIZE 128     into into:     #define SERIAL_BUFFER_SIZE 1024
 
 //#define GPS_USE_TCP 1                    // comment out for serial gps, activate for TCP client-based GPS
-//#define GPS_SKYTRAQ  1               // comment out for ublox gps, uncomment for skytraq gps/NMEA
+#define GPS_SKYTRAQ  1               // comment out for ublox gps, uncomment for skytraq gps/NMEA
 
 #define REQUIRE_VALID_GPS  true       // mower will pause if no float and no fix GPS solution during mowing (recommended)
 //#define REQUIRE_VALID_GPS  false    // mower will continue to mow if no float or no fix solution (not recommended)
@@ -492,7 +492,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define CONSOLE_BAUDRATE    921600  // baudrate used for console
 #define BLE_BAUDRATE    115200        // baudrate used for BLE
 #define BLE_NAME      "TeensyRay"     // name for BLE module
-#define GPS_BAUDRATE  115200          // baudrate for GPS RTK module
+#define GPS_BAUDRATE  460800          // baudrate for GPS RTK module
 #define WIFI_BAUDRATE 115200          // baudrate for WIFI module
 #define ROBOT_BAUDRATE 115200         // baudrate for Linux serial robot (non-Ardumower)
 
@@ -546,8 +546,6 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
   #define pinMotorEnable  13         // EN motors enable
   #define pinMotorLeftPWM 7          // M1_IN1 left motor PWM pin
   #define pinMotorLeftDir 6         // M1_IN2 left motor Dir pin
-  #define pinMotorLeftBrake 5         
-  
   //#define pinMotorLeftSense A1       // M1_FB  left motor current sense
   //#define pinMotorLeftFault 25       // M1_SF  left motor fault
   #define pinMotorRightEnable  13                                                              
@@ -555,7 +553,6 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
   #define pinMotorRightDir 3        // M2_IN2 right motor Dir pin
   //#define pinMotorRightSense A0      // M2_FB  right motor current sense
   //#define pinMotorRightFault 27      // M2_SF  right motor fault
-  #define pinMotorRightBrake 2         
 
  
   #define pinMotorMowPWM 10           // M1_IN1 mower motor PWM pin (if using MOSFET, use this pin)
@@ -564,7 +561,6 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
  // #define pinMotorMowFault 26        // M1_SF  mower motor fault   (if using MOSFET/L298N, keep unconnected)
   #define pinMotorMowEnable 13       // EN mower motor enable      (if using MOSFET/L298N, keep unconnected)
  // #define pinMotorMowRpm A11
-  #define pinMotorMowBrake 8        
       
  // #define pinFreeWheel 8             // front/rear free wheel sensor    
   #define pinBumperLeft 35           // bumper pins
